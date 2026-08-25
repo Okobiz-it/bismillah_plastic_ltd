@@ -3,8 +3,8 @@ import ProductsPageContent from "@/components/products/ProductsPageContent";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Recycled Plastic Products — PET, PP, HDPE, LDPE | Bangladesh",
-  description: "Browse our range of high-quality recycled plastic chips and flakes. We manufacture and export PET, PP, HDPE, and LDPE materials for industrial use.",
+  title: "Materials & Recycled Products — PET, HDPE, PP, LDPE, PVC, PS | Bismillah Plastic",
+  description: "Browse the range of plastic materials we collect and recycle — PET, HDPE, LDPE, PVC, PP, PS, sachets, mixed waste, and tires — processed into high-quality recycled flakes for downstream manufacturing.",
 };
 
 export const dynamic = 'force-dynamic';

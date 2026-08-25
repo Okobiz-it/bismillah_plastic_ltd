@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Gallery | Bismillah Plastic",
-  description: "Explore our company gallery — a visual journey through our operations, logistics facilities, and global trade partnerships.",
+  description: "Explore our company gallery — a visual journey through our plastic waste collection, mechanical recycling operations, and processing facilities in Dinajpur, Bangladesh.",
 };
 
 async function getGalleryPhotos() {

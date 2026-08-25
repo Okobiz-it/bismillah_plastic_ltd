@@ -22,10 +22,10 @@ interface GlobalExportPageContentProps {
 
 export default function GlobalExportPageContent({ header, exportRegions = [] }: GlobalExportPageContentProps) {
   const logisticsSteps = [
-    { title: "Factory Loading", description: "Materials are carefully packed in jumbo bags and loaded into containers at our manufacturing facility." },
-    { title: "Inland Transport", description: "Secure transport from our facility to Chattogram Port, handling all local logistics and documentation." },
-    { title: "Customs Clearance", description: "Efficient handling of all export documentation, customs clearance, and compliance requirements." },
-    { title: "International Shipping", description: "FOB or CIF shipping via major shipping lines to your destination port worldwide." },
+    { title: "Community Collection", description: "Plastic waste is recovered through 30 dedicated collection centers across the Dinajpur region, engaging waste workers and paddle-van drivers." },
+    { title: "Aggregation & Transport", description: "Collected materials are aggregated at local centers and transported directly to our processing facilities at Chawliapotti, Baluadangga and Damail, Biral." },
+    { title: "Mechanical Recycling", description: "Materials undergo sorting, cleaning (hot-wash and cold-wash), crushing, and drying through our industrial processing equipment." },
+    { title: "Downstream Supply", description: "High-quality recycled plastic flakes are supplied to downstream manufacturers for fiber, pellet, and upcycled product production." },
   ];
 
   return (
@@ -50,10 +50,10 @@ export default function GlobalExportPageContent({ header, exportRegions = [] }: 
             <div className="h-px w-8 bg-emerald-400/80" />
           </div>
           <h1 className="font-serif fluid-h1 text-white font-bold leading-tight mb-4">
-            {header?.headline || "Manufactured in Bangladesh. Exported Worldwide."}
+            {header?.headline || "Supplying Recycled Materials to Downstream Manufacturers"}
           </h1>
           <p className="text-base sm:text-lg text-white/80 max-w-2xl mx-auto leading-relaxed">
-            {header?.description || "We handle the complete export logistics chain, ensuring reliable delivery of recycled plastic materials to manufacturers across the globe."}
+            {header?.description || "From community-level collection to industrial-scale processing, we supply high-quality recycled plastic flakes to manufacturers across domestic and international markets."}
           </p>
         </div>
       </section>
@@ -63,9 +63,9 @@ export default function GlobalExportPageContent({ header, exportRegions = [] }: 
         <section className="section-padding bg-ivory">
           <div className="container-wide">
             <SectionHeader
-              eyebrow="Export Map"
-              title="Our Global Reach"
-              description="Supplying recycled plastic materials to markets across continents."
+              eyebrow="Distribution Network"
+              title="Our Reach"
+              description="Supplying recycled plastic flakes to downstream manufacturers across multiple markets."
             />
             <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {exportRegions.map((region, i) => (
@@ -108,7 +108,7 @@ export default function GlobalExportPageContent({ header, exportRegions = [] }: 
                   <div className="h-px w-8 bg-accent" />
                   <span className="eyebrow text-accent">Logistics</span>
                 </div>
-                <h2 className="font-serif fluid-h3 text-brand font-bold mb-6">Seamless Export Process</h2>
+                <h2 className="font-serif fluid-h3 text-brand font-bold mb-6">Integrated Supply Chain</h2>
                 
                 <div className="space-y-6">
                   {logisticsSteps.map((step, i) => (
@@ -132,9 +132,9 @@ export default function GlobalExportPageContent({ header, exportRegions = [] }: 
       </section>
 
       <CTABanner
-        headline="Ready for International Shipment?"
-        description="We offer competitive pricing on FOB and CIF terms for destinations worldwide."
-        buttonText="Get a quote"
+        headline="Partner With Our Supply Network"
+        description="Whether you're a downstream manufacturer or a potential collection partner, we're ready to discuss opportunities."
+        buttonText="Contact Us"
       />
     </>
   );

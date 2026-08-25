@@ -9,54 +9,54 @@ export interface TeamMember {
 
 export const teamMembers: TeamMember[] = [
   {
-    name: "Farhan Rahman",
+    name: "Managing Director",
     title: "Chief Executive Officer",
-    bio: "25+ years in industrial manufacturing. Built Bismillah Plastic from a small recycling unit into a world-class recycled plastic manufacturing house.",
+    bio: "Oversees all operations of Bismillah Plastic, from community-level waste collection to industrial-scale mechanical recycling. Drives strategic partnerships and ensures operational consistency across all 30 collection centers and both processing units.",
   },
   {
-    name: "Nusrat Jahan",
-    title: "Managing Director",
-    bio: "Former logistics head at a major shipping line. Steers strategic partnerships and international joint ventures across 40+ countries.",
+    name: "Operations Head",
+    title: "Director of Operations",
+    bio: "Manages the end-to-end recycling pipeline — from collection and sorting to cleaning, mechanical recycling, and final quality control. Ensures that hot-wash and cold-wash processing meets purity and hygiene standards.",
   },
   {
-    name: "Kamal Hossain",
-    title: "Director of Raw Materials",
-    bio: "Specializes in sourcing post-consumer plastic waste. Manages a vast network of local collection hubs and material recovery facilities.",
+    name: "Collection Network Manager",
+    title: "Head of Waste Collection",
+    bio: "Coordinates the decentralized network of 30 collection centers across the Dinajpur region. Integrates informal waste workers and paddle-van drivers into the formal supply chain to maximize material recovery.",
   },
   {
-    name: "Ayesha Siddiqua",
-    title: "Director of Exports",
-    bio: "Expert in European textile compliance. Oversees our flagship RMG and leather export divisions, ensuring strict EU REACH and BSCI adherence.",
+    name: "Processing Unit Supervisor",
+    title: "Plant Manager — Unit 1 & Unit 2",
+    bio: "Supervises daily operations at both processing facilities in Chawliapotti, Baluadangga and Damail, Biral. Oversees the operation of crushers, washers, dryers, and quality-control equipment.",
   },
   {
-    name: "Tariq Mahmud",
-    title: "Logistics Manager",
-    bio: "Master orchestrator of domestic and international logistics. Ensures just-in-time delivery for finished recycled materials to global factories.",
+    name: "Quality Control Manager",
+    title: "Head of Quality Assurance",
+    bio: "Ensures all recycled plastic flakes meet the necessary purity, hygiene, and quality standards required for downstream manufacturing. Manages laboratory testing and batch documentation.",
   },
   {
-    name: "Dr. Sarah Ahmed",
-    title: "Operations Manager",
-    bio: "Ph.D. in Industrial Engineering. Optimizes warehouse throughput, cold-chain integrity, and port-to-plant distribution mechanics.",
+    name: "Logistics Coordinator",
+    title: "Transportation & Logistics Manager",
+    bio: "Coordinates the transportation of aggregated plastic waste from collection centers to processing facilities. Manages logistics for the distribution of finished recycled materials to downstream manufacturers.",
   },
   {
-    name: "Zayed Khan",
-    title: "Finance Manager",
-    bio: "Chartered Accountant with 15 years in industrial finance. Manages letters of credit, factory capital investments, and cross-border transactions.",
+    name: "Procurement Manager",
+    title: "External Sourcing Manager",
+    bio: "Manages procurement of additional plastic waste from external suppliers under formal, documented arrangements. Ensures consistent feedstock quality and supply volume to meet processing targets.",
   },
   {
-    name: "Elena Rostova",
-    title: "Sales Manager (Europe)",
-    bio: "Based in our Frankfurt liaison office. Bridges the gap between our Bangladesh manufacturing plant and European wholesale buyers.",
+    name: "Safety & Welfare Officer",
+    title: "OHS & Worker Welfare Manager",
+    bio: "Implements occupational health and safety protocols across all facilities. Manages PPE compliance, hazard identification, first-aid facilities, and coordinates healthcare access with the local hospital.",
   },
   {
-    name: "Rafiqul Islam",
-    title: "Procurement Manager",
-    bio: "On-the-ground sourcing expert. Audits domestic collection centers to ensure they meet our rigorous raw material quality standards.",
+    name: "Community Liaison",
+    title: "Social Impact & Inclusion Manager",
+    bio: "Operationalizes the company's commitment to gender equality and social inclusion through gender-neutral hiring practices and equal opportunity frameworks targeting underrepresented groups.",
   },
   {
-    name: "Hasan Chowdhury",
-    title: "Warehouse Manager",
-    bio: "Oversees our 50,000 sq. ft. Chattogram logistics hub. Maintains 99.9% inventory accuracy and manages strict cold-chain protocols.",
+    name: "Finance Manager",
+    title: "Head of Finance & Administration",
+    bio: "Manages financial operations, capital investments in processing infrastructure, and administrative functions across the enterprise. Ensures fiscal discipline and sustainable growth.",
   },
 ];
 
@@ -68,12 +68,12 @@ export interface CompanyValue {
 }
 
 export const companyValues: CompanyValue[] = [
-  { title: "Integrity", description: "We conduct business with absolute transparency, honoring our commitments to partners and clients worldwide.", icon: "shield" },
-  { title: "Quality", description: "From raw materials to finished goods, we enforce uncompromising quality control at every stage of the manufacturing process.", icon: "star" },
-  { title: "Commitment", description: "We are dedicated to the long-term success of our clients, ensuring reliable and continuous supply of premium flakes.", icon: "handshake" },
-  { title: "Innovation", description: "Embracing advanced sorting technology and modern processing to optimize yield and material purity.", icon: "lightbulb" },
-  { title: "Sustainability", description: "Promoting circular economy principles and ensuring our facility adheres to the highest environmental compliance standards.", icon: "leaf" },
-  { title: "Customer Focus", description: "Tailoring our manufacturing and export solutions to meet the unique demands and technical specifications of each buyer.", icon: "users" },
+  { title: "Circular Economy", description: "Transforming post-consumer plastic waste into reusable recycled materials, closing the loop in the plastics value chain and reducing reliance on virgin feedstocks.", icon: "leaf" },
+  { title: "Community Integration", description: "Actively engaging informal waste workers and paddle-van drivers into a formal, structured supply chain — providing livelihood opportunities and employment.", icon: "users" },
+  { title: "Worker Welfare", description: "Enforcing strict OHS protocols, mandatory PPE, on-site first-aid, hospital partnerships, and regular health check-ups to protect our entire workforce.", icon: "shield" },
+  { title: "Quality Excellence", description: "Employing dual hot-wash and cold-wash processing techniques with industrial crushers, washers, dryers, and quality-control equipment to ensure material purity.", icon: "star" },
+  { title: "Environmental Stewardship", description: "Intercepting plastic waste that poses documented risks to local land and water resources in the Dinajpur region, diverting it from improper disposal.", icon: "lightbulb" },
+  { title: "Social Inclusion", description: "Implementing gender-neutral hiring practices and equal opportunity frameworks targeting underrepresented groups across all operations.", icon: "handshake" },
 ];
 
 // ─── Timeline / Milestones ────────────────────────────────────
@@ -84,14 +84,14 @@ export interface Milestone {
 }
 
 export const milestones: Milestone[] = [
-  { year: "2009", title: "Founded in Dhaka", description: "Started as a small plastic recycling unit serving domestic manufacturers from a facility in Gazipur." },
-  { year: "2012", title: "Expanded to Premium Flakes", description: "Upgraded our washing lines to produce hot-washed PET flakes, opening up export markets in East Asia." },
-  { year: "2014", title: "Factory Expansion", description: "Tripled our production capacity with a new state-of-the-art facility featuring automated optical sorting." },
-  { year: "2016", title: "ISO 9001 Certified", description: "Achieved ISO 9001:2015 certification, establishing quality management standards across all operations." },
-  { year: "2018", title: "Warehousing & Logistics Hub", description: "Opened 50,000 sq. ft. of finished goods warehousing near Chattogram port for faster export fulfillment." },
-  { year: "2020", title: "Global Reach", description: "Expanded our export network to over 40 countries across Europe, Middle East, East Asia, and North America." },
-  { year: "2023", title: "Export Logistics Division", description: "Launched end-to-end export logistics management for seamless door-to-port delivery for international clients." },
-  { year: "2024", title: "Digital Quality Tracking", description: "Implemented real-time batch tracking and digital specification documentation for all shipments." },
+  { year: "2016", title: "Operations Commenced", description: "Bismillah Plastic formally commenced operations on 02 January 2016 in the Dinajpur region of Bangladesh." },
+  { year: "2017", title: "Collection Network Established", description: "Established a decentralized network of collection centers across Dinajpur, integrating informal waste workers into the formal supply chain." },
+  { year: "2018", title: "Unit 1 — Full Operations", description: "Processing facility at Chawliapotti, Baluadangga achieved full operational capacity with industrial crushers, washers, and dryers." },
+  { year: "2019", title: "Hot-Wash & Cold-Wash Lines", description: "Introduced dual hot-wash and cold-wash processing techniques to meet higher purity and hygiene standards for downstream manufacturers." },
+  { year: "2020", title: "Unit 2 Commissioned", description: "Opened the second processing unit at Damail, Biral, Dinajpur to expand throughput and handle the growing volume of waste materials." },
+  { year: "2021", title: "30 Collection Centers", description: "Expanded the collection infrastructure to 30 dedicated centers, each overseen by a designated manager for operational consistency." },
+  { year: "2023", title: "iDEA TREE Partnership", description: "Partnered with iDEA TREE as the project's development consultant under the BIS-Community Collection framework." },
+  { year: "2025", title: "Scaling to 24,000 MT", description: "Projected operational scaling to 24,000 metric tons annual processing capacity by Year 5, reinforcing commercial viability of recycled plastics." },
 ];
 
 // ─── Client Logos ─────────────────────────────────────────────
@@ -101,18 +101,14 @@ export interface ClientLogo {
 }
 
 export const clientLogos: ClientLogo[] = [
-  { name: "Rheinland Textilgruppe", id: "rheinland" },
-  { name: "Gulf Packaging Industries", id: "gulf-pack" },
-  { name: "Mariscos del Atlántico", id: "mariscos" },
-  { name: "Pelletteria Toscana", id: "pelletteria" },
-  { name: "Al-Khaleej Foods", id: "alkhaleej" },
-  { name: "Nordic Home Textiles", id: "nordic" },
-  { name: "Apex Industrial Group", id: "apex" },
-  { name: "Istanbul Deri Ltd", id: "istanbul-deri" },
-  { name: "Pacific Rim Trading", id: "pacific-rim" },
-  { name: "Sahara Distribution", id: "sahara" },
-  { name: "EuroAgri Partners", id: "euroagri" },
-  { name: "Bengal Bay Logistics", id: "bengal-bay" },
+  { name: "Downstream Fiber Manufacturer", id: "fiber-mfg" },
+  { name: "Plastic Pellet Producer", id: "pellet-prod" },
+  { name: "Upcycled Products Company", id: "upcycled-co" },
+  { name: "Regional Packaging Firm", id: "packaging-firm" },
+  { name: "Textile Recycler", id: "textile-recycler" },
+  { name: "Industrial Plastics Ltd", id: "industrial-plastics" },
+  { name: "Green Materials Corp", id: "green-materials" },
+  { name: "Circular Economy Partners", id: "circular-partners" },
 ];
 
 // ─── Case Studies ─────────────────────────────────────────────
@@ -128,36 +124,36 @@ export interface CaseStudy {
 export const caseStudies: CaseStudy[] = [
   {
     id: "cs1",
-    client: "Rheinland Textilgruppe",
-    region: "Germany",
+    client: "Downstream Fiber Manufacturer",
+    region: "Bangladesh",
     challenge:
-      "Needed a reliable sourcing partner who could consistently provide 100% clear hot-washed PET flakes for their recycled polyester fiber production lines.",
+      "Needed a reliable, consistent supply of high-quality recycled PET flakes for their polyester fiber production lines, but struggled with contamination and inconsistent quality from other suppliers.",
     solution:
-      "We dedicated a specific high-purity optical sorting line to their orders, established a customized contamination testing protocol, and provided digital batch analysis reports.",
+      "Bismillah Plastic dedicated a specific hot-wash processing line to their orders, implemented rigorous quality-control testing at every stage, and established formal documentation for each batch.",
     result:
-      "Zero contamination rejections over three years, 98.5% on-time delivery rate, and improved their fiber yield by 12% compared to their previous supplier.",
+      "Achieved consistent supply of recycled PET flakes meeting purity standards, enabling uninterrupted fiber production and reducing the manufacturer's reliance on virgin plastic feedstocks.",
   },
   {
     id: "cs2",
-    client: "Al-Khaleej Packaging",
-    region: "Saudi Arabia",
+    client: "Plastic Pellet Producer",
+    region: "Dinajpur Region",
     challenge:
-      "Required a year-round supply of high-grade PP recycled chips with consistent melt flow index (MFI) for injection molding applications.",
+      "Required year-round supply of multiple polymer types (HDPE, PP, LDPE) in recycled flake form with consistent quality suitable for pelletization.",
     solution:
-      "We established a dedicated PP processing unit, implemented strict melt flow testing, and set up a custom bulk bag packaging line for their specific silos.",
+      "Leveraged the network of 30 collection centers to ensure consistent feedstock volume. Employed dual hot-wash and cold-wash processing to guarantee purity standards across all polymer types.",
     result:
-      "Grew from an initial 200-ton trial order to a 2,000-ton annual contract within two years. Now their primary PP recycled material supplier.",
+      "Grew from an initial trial arrangement to a long-term supply partnership, with Bismillah Plastic becoming their primary recycled material supplier across multiple polymer categories.",
   },
   {
     id: "cs3",
-    client: "Pelletteria Toscana",
-    region: "Italy",
+    client: "Upcycled Products Company",
+    region: "Bangladesh",
     challenge:
-      "Sourcing REACH-compliant recycled HDPE from South Asia was proving unreliable, with frequent color inconsistencies and high moisture content.",
+      "Sourcing mixed recycled plastics including sachets and flexible waste was proving difficult, with limited suppliers capable of processing such diverse material streams.",
     solution:
-      "We upgraded our drying centrifuges to guarantee <1% moisture, implemented strict color-sorting protocols, and standardized all documentation per EU import requirements.",
+      "Bismillah Plastic's capability to process a highly diversified portfolio — including sachets, mixed waste, and miscellaneous plastics — provided the exact material mix needed. Quality-controlled processing ensured usable output.",
     result:
-      "Established a consistent supply delivering 500+ MT of HDPE quarterly, with full REACH compliance and zero rejected shipments due to moisture.",
+      "Established a consistent supply of processed mixed plastic materials, enabling the manufacturer to scale their upcycled product line and divert additional waste from improper disposal.",
   },
 ];
 
@@ -170,10 +166,7 @@ export interface TradeRegion {
 }
 
 export const tradeRegions: TradeRegion[] = [
-  { name: "Europe", countries: "Germany, Italy, Spain, UK, Netherlands, France", keyProducts: "Clear PET Flakes, PP Chips", stats: "15 countries served" },
-  { name: "Middle East", countries: "UAE, Saudi Arabia, Qatar, Kuwait, Oman", keyProducts: "HDPE, LDPE, Colored PET", stats: "8 countries served" },
-  { name: "East Asia", countries: "Japan, South Korea, China, Vietnam", keyProducts: "Premium PET Flakes, PP", stats: "6 countries served" },
-  { name: "North America", countries: "USA, Canada", keyProducts: "Recycled Plastic Resins", stats: "2 countries served" },
-  { name: "South Asia", countries: "India, Sri Lanka, Nepal", keyProducts: "HDPE Flakes, PP Chips", stats: "4 countries served" },
-  { name: "Africa", countries: "Egypt, Kenya, South Africa, Nigeria", keyProducts: "Mixed Plastic Flakes, LDPE", stats: "5 countries served" },
+  { name: "Dinajpur Region", countries: "Chawliapotti, Baluadangga, Damail, Biral", keyProducts: "PET, HDPE, PP, LDPE Flakes", stats: "2 processing units" },
+  { name: "Domestic Markets", countries: "Bangladesh — fiber, pellet, and packaging manufacturers", keyProducts: "Recycled Plastic Flakes", stats: "Multiple downstream buyers" },
+  { name: "International Markets", countries: "Global downstream manufacturers", keyProducts: "High-Quality Recycled Flakes", stats: "Domestic & international supply" },
 ];

@@ -244,7 +244,7 @@ export default function MissionVisionAdminContent() {
                       required
                       value={formData.year}
                       onChange={e => setFormData({ ...formData, year: e.target.value })}
-                      placeholder="e.g. 2009"
+                      placeholder="e.g. 2016"
                       className="admin-input"
                     />
                   </div>

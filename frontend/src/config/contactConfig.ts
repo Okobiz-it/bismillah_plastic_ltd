@@ -1,12 +1,12 @@
 export const contactConfig = {
   offices: {
     headOffice: {
-      name: "Location",
-      address: "Baluadangga, Chauliapotti, Dinajpur.",
+      name: "Unit 1 — Processing Facility",
+      address: "Chawliapotti, Baluadangga, Dinajpur, Bangladesh",
     },
     factoryOffice: {
-      name: "",
-      address: "",
+      name: "Unit 2 — Processing Facility",
+      address: "Damail, Biral, Dinajpur, Bangladesh",
     },
     portOffice: {
       name: "",

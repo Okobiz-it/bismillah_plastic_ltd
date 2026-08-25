@@ -373,7 +373,7 @@ export default function NetworkAdminContent() {
                   type="text"
                   placeholder={
                     activeTab === "Supply"
-                      ? "e.g. Dhaka, Chittagong, Sylhet"
+                      ? "e.g. Dinajpur, Baluadangga, Biral"
                       : activeTab === "Import"
                         ? "e.g. Germany, China, India"
                         : "e.g. United States, Germany, UAE"
@@ -401,10 +401,10 @@ export default function NetworkAdminContent() {
                   rows={2}
                   placeholder={
                     activeTab === "Import"
-                      ? "e.g. Industrial Chemicals, Plastic Resins"
+                      ? "e.g. PET Flakes, HDPE Flakes, PP Flakes"
                       : activeTab === "Export"
-                        ? "e.g. Ready-Made Garments, Jute Goods"
-                        : "e.g. Raw Jute, Cotton Yarn, Denim Fabrics"
+                        ? "e.g. Recycled Plastic Flakes, Mixed Plastics"
+                        : "e.g. Recycled PET, HDPE, LDPE, PP Materials"
                   }
                   value={countryForm.keyProducts}
                   onChange={e => setCountryForm({...countryForm, keyProducts: e.target.value})}

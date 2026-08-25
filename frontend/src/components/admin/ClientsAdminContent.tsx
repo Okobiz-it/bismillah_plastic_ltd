@@ -102,14 +102,14 @@ export default function ClientsAdminContent() {
     <div className="p-4 md:p-5 relative">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
         <div>
-          <h3 className="text-lg font-semibold text-brand">Our Sister Concerns</h3>
-          <p className="text-sm text-stone-500 mt-1">Manage the sister concern logos shown on the homepage and about page.</p>
+          <h3 className="text-lg font-semibold text-brand">Our Network Partners</h3>
+          <p className="text-sm text-stone-500 mt-1">Manage the partner logos shown on the homepage and about page.</p>
         </div>
         <button
           onClick={() => openModal()}
           className="admin-btn-primary w-full sm:w-auto"
         >
-          <FaPlus /> Add Sister Concern
+          <FaPlus /> Add Partner
         </button>
       </div>
 
@@ -167,7 +167,7 @@ export default function ClientsAdminContent() {
           <div className="admin-modal-content max-w-md">
             <div className="admin-modal-header">
               <h2 className="text-xl font-serif font-bold text-brand">
-                {editingId ? 'Edit Sister Concern' : 'Add New Sister Concern'}
+                {editingId ? 'Edit Partner' : 'Add New Partner'}
               </h2>
               <button onClick={closeModal} className="text-stone-400 hover:text-stone-700 transition-colors p-2 cursor-pointer">
                 <FaTimes size={20} />
@@ -177,7 +177,7 @@ export default function ClientsAdminContent() {
             <div className="admin-modal-body">
               <form id="clientForm" onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-semibold text-stone-700 mb-1.5">Sister Concern Name <span className="text-red-500">*</span></label>
+                  <label className="block text-sm font-semibold text-stone-700 mb-1.5">Partner Name <span className="text-red-500">*</span></label>
                   <input
                     type="text"
                     required
@@ -217,7 +217,7 @@ export default function ClientsAdminContent() {
                 disabled={submitting}
                 className="admin-btn-primary w-full sm:w-auto"
               >
-                {submitting ? 'Saving...' : 'Save Sister Concern'}
+                {submitting ? 'Saving...' : 'Save Partner'}
               </button>
             </div>
           </div>

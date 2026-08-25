@@ -3,8 +3,8 @@ import GlobalExportPageContent from "@/components/export/GlobalExportPageContent
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Global Export — Recycled Plastic Manufacturer | Bangladesh",
-  description: "Reliable export of recycled plastic chips and flakes from Bangladesh to international markets worldwide. Discover our global reach and export logistics.",
+  title: "Downstream Supply & Distribution — Recycled Plastic Flakes | Bismillah Plastic",
+  description: "Supplying high-quality recycled plastic flakes to downstream manufacturers for fiber, pellet, and upcycled product production from our Dinajpur-based operations.",
 };
 
 export const dynamic = 'force-dynamic';

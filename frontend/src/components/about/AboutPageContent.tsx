@@ -5,7 +5,6 @@ import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import SectionHeader from "@/components/shared/SectionHeader";
 import CTABanner from "@/components/shared/CTABanner";
-import { qualityParameters } from "@/data/manufacturingData";
 import LogoMarquee from "@/components/shared/LogoMarquee";
 import SafeImage from "@/components/shared/SafeImage";
 import ImageModal from "@/components/shared/ImageModal";
@@ -35,31 +34,6 @@ function FadeIn({
   );
 }
 
-// Quality control icon mapping
-function getQualityIcon(index: number) {
-  const cls = "text-brand group-hover:text-gold transition-colors";
-  const icons = [
-    // 0: Raw Material Inspection — magnifying glass / eye
-    <svg key="qc0" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={cls}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>,
-    // 1: Sorting Control — layers
-    <svg key="qc1" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={cls}><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>,
-    // 2: Washing Control — droplet
-    <svg key="qc2" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={cls}><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>,
-    // 3: Moisture Control — thermometer
-    <svg key="qc3" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={cls}><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>,
-    // 4: Contamination Control — shield check
-    <svg key="qc4" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={cls}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>,
-    // 5: Batch Testing — flask / beaker
-    <svg key="qc5" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={cls}><path d="M9 3h6v7l5 8a2 2 0 0 1-1.7 3H5.7A2 2 0 0 1 4 18l5-8V3z"/><line x1="9" y1="3" x2="15" y2="3"/></svg>,
-    // 6: Final Inspection — clipboard check
-    <svg key="qc6" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={cls}><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><polyline points="9 14 11 16 15 12"/></svg>,
-    // 7: Packaging Inspection — package / box
-    <svg key="qc7" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={cls}><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>,
-    // 8: Quality Documentation — file-text
-    <svg key="qc8" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={cls}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>,
-  ];
-  return icons[index] || icons[0];
-}
 
 interface AboutPageContentProps {
   journey?: any[];
@@ -85,10 +59,10 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
           <FadeIn>
             <span className="eyebrow text-white block mb-4">ABOUT US</span>
             <h1 className="font-serif text-white font-semibold mb-4 sm:mb-6 max-w-4xl mx-auto leading-tight" style={{ fontSize: 'clamp(2rem, 3vw + 0.75rem, 3.75rem)' }}>
-              Built on Trust, Manufactured for the World
+              Driving the Circular Plastics Economy
             </h1>
             <p className="text-white/70 text-lg max-w-3xl mx-auto leading-relaxed">
-              For over 15 years, {companyName} has transformed plastic waste into high-quality recycled raw materials — with integrity, compliance, and a relentless commitment to quality.
+              Since 2016, {companyName} has systematically transformed recovered post-consumer and industrial plastics into high-quality recycled materials — serving as a critical infrastructural link within the domestic circular economy.
             </p>
           </FadeIn>
         </div>
@@ -102,27 +76,28 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
               <div>
                 <span className="eyebrow">Our Story</span>
                 <h3 className="font-serif text-brand mt-3 mb-4 sm:mb-6 leading-tight" style={{ fontSize: 'clamp(1.5rem, 1.5vw + 0.75rem, 2.25rem)' }}>
-                  From a Local Recycler to Global Exporter
+                  Addressing Regional Waste Management Challenges
                 </h3>
                 <div className="space-y-4 text-text-muted leading-relaxed">
                   <p>
-                    {companyName} was founded in 2009 by Farhan Rahman, a veteran of
-                    Bangladesh&rsquo;s industrial sector, with a simple conviction: that plastic 
-                    waste could be transformed into high-quality, sustainable raw materials for 
-                    global manufacturers.
+                    {companyName} is a Bangladesh-based enterprise specializing in plastic waste
+                    collection and mechanical recycling. Operating out of the Dinajpur region, the
+                    organization addresses localized waste management challenges by systematically
+                    transforming recovered post-consumer and industrial plastics into reusable materials.
                   </p>
                   <p>
-                    What began as a small recycling unit serving a handful of domestic buyers has
-                    grown into a world-class recycled plastic manufacturing facility. Today, we 
-                    process over 10,000 tons of post-consumer plastic annually, maintain ISO-certified 
-                    operations, and export premium PET, PP, and HDPE flakes to manufacturers across 
-                    the globe from our headquarters in Dhaka and facility in Gazipur.
+                    The enterprise formally commenced operations on 02 January 2016 and functions
+                    through an integrated operational model that combines community-based waste
+                    collection with advanced mechanical processing capabilities. By managing the
+                    end-to-end recovery of assorted plastic materials, {companyName} serves as a
+                    critical infrastructural link within the domestic circular economy, providing
+                    essential raw material feedstocks for downstream manufacturing sectors.
                   </p>
                   <p>
-                    Our growth has been deliberate, not reckless. Every new product category, every
-                    new market, every new warehouse has been added because our clients needed it —
-                    and because we could deliver it to the standards they expect. That philosophy
-                    of earned expansion, rooted in trust, defines who we are.
+                    Today, the enterprise operates two primary processing facilities, manages a
+                    decentralized collection infrastructure anchored by 30 dedicated collection centers,
+                    and projects processing capacity scaling from 15,000 MT in Year 1 to 24,000 MT
+                    by Year 5 — working in conjunction with iDEA TREE as the project&rsquo;s development consultant.
                   </p>
                 </div>
               </div>
@@ -144,26 +119,189 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
         </div>
       </section>
 
-      {/* Quality Control */}
+      {/* ── FACILITIES & OPERATING UNITS ── */}
       <section className="section-padding bg-ivory">
         <div className="container-wide">
-          <SectionHeader
-            eyebrow="QUALITY CONTROL"
-            title="Our Quality Standards"
-            description="Each stage of production is monitored and tested to ensure material consistency and specification compliance."
-          />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-            {qualityParameters.map((param, i) => (
-              <FadeIn key={param.title} delay={i * 0.06}>
-                <div className="bg-white p-5 sm:p-6 md:p-8 rounded-sm shadow-sm border border-stone/30 hover:border-gold/40 hover:shadow-md transition-all duration-300 h-full group">
-                  <div className="w-12 h-12 bg-stone/20 rounded-full flex items-center justify-center mb-6 group-cursor-pointer hover:bg-gold/10 transition-colors">
-                    {getQualityIcon(i)}
-                  </div>
-                  <h4 className="font-serif text-lg sm:text-xl font-semibold text-brand mb-3">{param.title}</h4>
-                  <p className="text-sm text-text-muted leading-relaxed">{param.description}</p>
+          <FadeIn>
+            <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-center">
+              {/* Image Left */}
+              <div className="w-full lg:w-[45%] flex-shrink-0">
+                <div className="relative aspect-[4/3] rounded-sm overflow-hidden shadow-lg">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="https://res.cloudinary.com/wpttnkjq/image/upload/v1787638220/www.beatsnoop.com-3000-Sh0eLEpBiM_1_rfcu8w.jpg"
+                    alt="Bismillah Plastic processing facilities"
+                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-brand/20 via-transparent to-transparent" />
                 </div>
-              </FadeIn>
-            ))}
+              </div>
+              {/* Content Right */}
+              <div className="w-full lg:w-[55%]">
+                <h2 className="font-serif text-2xl sm:text-3xl text-brand font-bold leading-tight mb-5">
+                  Facilities &amp; Operating Units
+                </h2>
+                <p className="text-stone-600 leading-relaxed text-justify text-[15px] mb-6">
+                  To manage its processing volumes, Bismillah Plastic operates two primary processing locations within the Dinajpur region of Bangladesh.
+                </p>
+                <div className="overflow-x-auto">
+                  <div className="border-2 border-brand rounded-sm overflow-hidden shadow-sm">
+                    <table className="w-full text-sm border-collapse">
+                      <thead>
+                        <tr className="bg-brand text-white">
+                          <th className="px-4 py-3 text-left font-semibold">Unit Designation</th>
+                          <th className="px-4 py-3 text-left font-semibold">Operational Location</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="bg-stone-50">
+                          <td className="px-4 py-3 border-b border-stone-200 font-medium text-stone-700">Unit 1</td>
+                          <td className="px-4 py-3 border-b border-stone-200 text-stone-600">Chawliapotti, Baluadangga, Dinajpur, Bangladesh</td>
+                        </tr>
+                        <tr className="bg-white">
+                          <td className="px-4 py-3 font-medium text-stone-700">Unit 2</td>
+                          <td className="px-4 py-3 text-stone-600">Damail, Biral, Dinajpur, Bangladesh</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* ── SOCIAL IMPACT & WORKER WELFARE ── */}
+      <section className="section-padding bg-warm-white">
+        <div className="container-wide">
+          <FadeIn>
+            <div className="flex flex-col lg:flex-row-reverse gap-10 lg:gap-16 items-center">
+              {/* Image Right */}
+              <div className="w-full lg:w-[45%] flex-shrink-0">
+                <div className="relative aspect-[4/3] rounded-sm overflow-hidden shadow-lg">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="https://res.cloudinary.com/wpttnkjq/image/upload/v1787638551/www.beatsnoop.com-3000-h8treCAnqK_1_vridez.jpg"
+                    alt="Social impact and worker welfare programs"
+                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-brand/20 via-transparent to-transparent" />
+                </div>
+              </div>
+              {/* Content Left */}
+              <div className="w-full lg:w-[55%]">
+                <h2 className="font-serif text-2xl sm:text-3xl text-brand font-bold leading-tight mb-5">
+                  Social Impact &amp; Worker Welfare
+                </h2>
+                <div className="space-y-4 text-stone-600 leading-relaxed text-justify text-[15px]">
+                  <p>
+                    Beyond environmental mitigation, the operations generate measurable socio-economic impact by providing livelihood opportunities and employment. The enterprise creates direct and indirect employment across its value chain, including roles in logistics, administration, collection, and mechanical processing. The company actively improves working conditions for the informal waste sector—specifically community collectors, waste pickers, and truck drivers—by integrating them into a formal and structured supply chain. Furthermore, Bismillah Plastic implements documented commitments to gender equality and social inclusion, which are operationalized through gender-neutral hiring practices and equal opportunity frameworks targeting underrepresented groups.
+                  </p>
+                  <p>
+                    Occupational health and safety (OHS) serves as a central pillar of the organizational framework. Bismillah Plastic enforces strict worker welfare protocols and standard operating procedures to protect its workforce.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* ── SAFETY & WELFARE FOCUS ── */}
+      <section className="section-padding bg-ivory">
+        <div className="container-wide">
+          <FadeIn>
+            <div className="text-center mb-10 sm:mb-14">
+              <h2 className="font-serif text-2xl sm:text-3xl text-brand font-bold leading-tight mb-3">
+                Safety &amp; Welfare Focus
+              </h2>
+              <p className="text-stone-500 max-w-2xl mx-auto text-sm sm:text-base">
+                Comprehensive protocols ensuring the health, safety, and dignity of every worker across the value chain.
+              </p>
+            </div>
+          </FadeIn>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
+            {/* Occupational Training */}
+            <FadeIn delay={0}>
+              <div className="bg-white rounded-sm border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 h-full">
+                <div className="relative aspect-[16/9] overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="https://res.cloudinary.com/wpttnkjq/image/upload/v1787633413/www.beatsnoop.com-3000-pKwyPINtJs_cbj7mz.jpg"
+                    alt="Occupational training programs"
+                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                  />
+                </div>
+                <div className="p-5 sm:p-6">
+                  <h3 className="font-serif text-lg sm:text-xl text-brand font-semibold mb-2">Occupational Training</h3>
+                  <p className="text-sm text-stone-600 leading-relaxed text-justify">
+                    Formal OHS training, hazard identification, and risk-control education are delivered to all employees through structured onboarding and recurring refresher programs. Workers receive hands-on instruction in safe equipment operation, chemical handling procedures, and emergency response protocols to maintain a consistently safe working environment.
+                  </p>
+                </div>
+              </div>
+            </FadeIn>
+
+            {/* On-Site Safety */}
+            <FadeIn delay={0.1}>
+              <div className="bg-white rounded-sm border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 h-full">
+                <div className="relative aspect-[16/9] overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="https://res.cloudinary.com/wpttnkjq/image/upload/v1787633413/www.beatsnoop.com-3000-4gUYrEiqjw_rfgf2z.jpg"
+                    alt="On-site safety measures and PPE"
+                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                  />
+                </div>
+                <div className="p-5 sm:p-6">
+                  <h3 className="font-serif text-lg sm:text-xl text-brand font-semibold mb-2">On-Site Safety</h3>
+                  <p className="text-sm text-stone-600 leading-relaxed text-justify">
+                    Mandatory use of appropriate Personal Protective Equipment (PPE) alongside visible hazard pictograms and emergency contact displays is enforced across all operational areas. Regular safety audits and workplace inspections are conducted to identify and remediate potential hazards before they escalate, ensuring compliance with established safety standards.
+                  </p>
+                </div>
+              </div>
+            </FadeIn>
+
+            {/* Healthcare Access */}
+            <FadeIn delay={0.2}>
+              <div className="bg-white rounded-sm border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 h-full">
+                <div className="relative aspect-[16/9] overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="https://res.cloudinary.com/wpttnkjq/image/upload/v1787633413/www.beatsnoop.com-3000-BUzvwt7elj_jarowg.jpg"
+                    alt="Healthcare access and first-aid facilities"
+                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                  />
+                </div>
+                <div className="p-5 sm:p-6">
+                  <h3 className="font-serif text-lg sm:text-xl text-brand font-semibold mb-2">Healthcare Access</h3>
+                  <p className="text-sm text-stone-600 leading-relaxed text-justify">
+                    First-aid facilities on-site, formalized arrangements with a local hospital for employee care, and regular employee health check-ups form the healthcare foundation. Preventive health screenings and wellness programs are implemented to proactively address occupational health risks and ensure that every worker has timely access to medical attention when needed.
+                  </p>
+                </div>
+              </div>
+            </FadeIn>
+
+            {/* Labor Compliance */}
+            <FadeIn delay={0.3}>
+              <div className="bg-white rounded-sm border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 h-full">
+                <div className="relative aspect-[16/9] overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="https://res.cloudinary.com/wpttnkjq/image/upload/v1787633413/www.beatsnoop.com-3000-UWoBkt8Apl_ocb19g.jpg"
+                    alt="Labor compliance and ethical policies"
+                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                  />
+                </div>
+                <div className="p-5 sm:p-6">
+                  <h3 className="font-serif text-lg sm:text-xl text-brand font-semibold mb-2">Labor Compliance</h3>
+                  <p className="text-sm text-stone-600 leading-relaxed text-justify">
+                    Strict policies prohibiting child labor and forced labor, with mandates legally extended to all subcontractors and supply chain partners, are rigorously enforced. The enterprise maintains comprehensive documentation and conducts periodic compliance audits to verify that all labor practices align with national regulations and international ethical standards.
+                  </p>
+                </div>
+              </div>
+            </FadeIn>
           </div>
         </div>
       </section>
@@ -198,8 +336,8 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
                   {/* Dot */}
                   <div
                     className={`absolute top-1 w-3 h-3 rounded-full bg-brand border-2 border-ivory z-10 ${i % 2 === 0
-                        ? "left-[10px] md:left-auto md:-right-[30px]"
-                        : "left-[10px] md:-left-[30px]"
+                      ? "left-[10px] md:left-auto md:-right-[30px]"
+                      : "left-[10px] md:-left-[30px]"
                       }`}
                   />
                   <span className="text-sm font-bold text-gold">{milestone.year}</span>
@@ -218,14 +356,13 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
           </div>
         </div>
       </section>
-      
-      {/* Our Sister Concerns / Logo Marquee */}
+
       <section className="section-padding bg-white border-y border-stone-light group">
         <div className="container-wide mb-10 text-center">
           <FadeIn>
-            <span className="eyebrow text-brand">OUR SISTER CONCERNS</span>
+            <span className="eyebrow text-brand">OUR NETWORK</span>
             <h2 className="font-serif text-brand font-semibold mt-4 mb-4" style={{ fontSize: 'clamp(1.625rem, 2vw + 0.75rem, 2.25rem)' }}>
-              Our Sister Concerns & Business Entities
+              Our Collection Network & Partners
             </h2>
           </FadeIn>
         </div>
@@ -240,25 +377,25 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
           <SectionHeader
             eyebrow="STANDARDS & COMPLIANCE"
             title="Certifications & Compliance"
-            description="We strictly adhere to global quality benchmarks, international trade compliance regulations, and sustainable sourcing practices across all our import and export operations."
+            description="We adhere to occupational health and safety standards, labor compliance regulations, and environmental best practices across all our recycling operations."
           />
           <div className="flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-6 max-w-6xl mx-auto">
             {certifications.map((cert: any, i: number) => (
-              <FadeIn 
-                key={cert._id || cert.id || cert.title || cert.name} 
-                delay={i * 0.05} 
+              <FadeIn
+                key={cert._id || cert.id || cert.title || cert.name}
+                delay={i * 0.05}
                 className="w-[calc(50%-8px)] sm:w-[calc(33.333%-16px)] lg:w-[calc(20%-20px)] min-w-[140px] sm:min-w-[160px] max-w-[220px]"
               >
-                <div 
+                <div
                   onClick={() => setSelectedCertForModal(cert)}
                   className="group cursor-pointer bg-ivory rounded-sm border border-stone/30 hover:border-gold/50 hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between overflow-hidden min-h-[180px] sm:min-h-[220px]"
                 >
                   <div className="h-32 sm:h-36 w-full relative flex items-center justify-center bg-white/60 p-3 overflow-hidden">
                     {cert.imageUrl ? (
-                      <SafeImage 
-                        src={cert.imageUrl} 
-                        alt={cert.title || cert.name || "Certification"} 
-                        className="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-300 ease-out" 
+                      <SafeImage
+                        src={cert.imageUrl}
+                        alt={cert.title || cert.name || "Certification"}
+                        className="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-300 ease-out"
                       />
                     ) : (
                       <div className="w-12 h-12 rounded-full bg-brand/10 text-brand flex items-center justify-center font-bold text-xs tracking-wider group-hover:scale-110 transition-transform duration-300">
@@ -284,9 +421,30 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
         </div>
       </section>
 
+      {/* ── CONCLUSION ── */}
+      <section className="section-padding bg-warm-white">
+        <div className="container-wide max-w-4xl">
+          <FadeIn>
+            <div className="text-center mb-6">
+              <h2 className="font-serif text-2xl sm:text-3xl text-brand font-bold leading-tight">
+                Conclusion
+              </h2>
+            </div>
+            <div className="relative">
+              <div className="absolute top-0 left-0 w-1 h-full bg-brand rounded-full hidden sm:block" />
+              <div className="sm:pl-8">
+                <p className="text-stone-600 leading-relaxed text-justify text-[15px] sm:text-base">
+                  Bismillah Plastic functions as a vital industrial stakeholder within Bangladesh&apos;s regional waste recovery infrastructure. Operating continuously since 2016, the enterprise successfully merges community-level waste aggregation with industrial-scale mechanical processing to address systemic waste management deficits. By diverting tens of thousands of metric tons of diverse plastics from improper disposal and processing them into high-quality manufacturing feedstock, Bismillah Plastic delivers measurable environmental risk mitigation, economically supports the informal labor sector, and advances the regional transition toward a circular plastics economy.
+                </p>
+              </div>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
       <CTABanner
         headline="Partner With Us"
-        description={`Join the global manufacturers that trust ${companyName} for their raw material supply.`}
+        description={`Join the downstream manufacturers and collection partners that work with ${companyName} in the circular plastics economy.`}
       />
 
       <ImageModal

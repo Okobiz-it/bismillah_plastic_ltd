@@ -22,10 +22,10 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
 }
 
 const defaultGoals = [
-  { year: "2026", title: "Carbon Neutral", description: "Achieve carbon neutrality across our warehousing and domestic logistics operations." },
-  { year: "2027", title: "Global Hubs", description: "Open direct liaison offices in Dubai and Frankfurt to shorten communication loops." },
-  { year: "2028", title: "Blockchain Tracking", description: "Implement blockchain-backed tracking for all raw material sourcing and export shipments." },
-  { year: "2030", title: "Market Expansion", description: "Expand our export footprint to 60+ countries, primarily penetrating Latin America." }
+  { year: "Year 1", title: "15,000 MT Capacity", description: "Projected processing capacity of 15,000 metric tons of plastic waste in the first year of scaled operations." },
+  { year: "Year 2", title: "17,000 MT Capacity", description: "Scaling operations to process 17,000 metric tons annually through expanded collection and processing capabilities." },
+  { year: "Year 3", title: "20,000 MT Capacity", description: "Achieving 20,000 metric tons annual processing capacity through optimized operations across both processing units." },
+  { year: "Year 5", title: "24,000 MT Capacity", description: "Target processing capacity of 24,000 metric tons per year, reinforcing the commercial viability of recycled plastics." }
 ];
 
 export default function MissionVisionContent({ goals = [] }: { goals?: any[] }) {
@@ -42,8 +42,8 @@ export default function MissionVisionContent({ goals = [] }: { goals?: any[] }) 
         <div className="container-wide relative z-10">
           <SectionHeader
             eyebrow="MISSION & VISION"
-            title="Purpose-Driven Trade"
-            description="Our foundational principles guide everything we do, from sourcing raw materials to delivering finished goods."
+            title="Purpose-Driven Recycling"
+            description="Our foundational principles guide everything we do, from community-level waste collection to industrial-scale mechanical processing."
             light
             centered={false}
           />
@@ -55,24 +55,24 @@ export default function MissionVisionContent({ goals = [] }: { goals?: any[] }) 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-20 items-center">
             <FadeIn>
               <div className="bg-warm-white p-6 sm:p-8 md:p-10 lg:p-14 rounded-sm border border-stone/30 shadow-sm relative">
-                <div className="absolute -top-6 -left-6 w-12 h-12 bg-gold text-white flex items-center justify-center rounded-sm font-serif text-2xl font-bold">
+                <div className="absolute -top-4 -left-4 sm:-top-6 sm:-left-6 w-9 h-9 sm:w-12 sm:h-12 bg-gold text-white flex items-center justify-center rounded-sm font-serif text-lg sm:text-2xl font-bold">
                   M
                 </div>
                 <h3 className="font-serif text-2xl sm:text-3xl font-semibold text-brand mb-4 sm:mb-6">Our Mission</h3>
                 <p className="text-base sm:text-lg text-text-muted leading-relaxed">
-                  To serve as the most trusted bridge between Bangladeshi producers and international markets. We are committed to empowering local industries by providing seamless, compliant, and highly efficient import-export solutions, while maintaining uncompromising quality standards in every transaction.
+                  To address localized waste management challenges in the Dinajpur region by systematically transforming recovered post-consumer and industrial plastics into reusable materials. We are committed to providing essential raw material feedstocks for downstream manufacturing sectors through an integrated operational model that combines community-based waste collection with advanced mechanical processing capabilities.
                 </p>
               </div>
             </FadeIn>
             
             <FadeIn delay={0.2}>
               <div className="bg-brand p-6 sm:p-8 md:p-10 lg:p-14 rounded-sm border border-brand shadow-sm relative text-white">
-                <div className="absolute -top-6 -right-6 w-12 h-12 bg-gold text-brand flex items-center justify-center rounded-sm font-serif text-2xl font-bold">
+                <div className="absolute -top-4 -right-4 sm:-top-6 sm:-right-6 w-9 h-9 sm:w-12 sm:h-12 bg-gold text-brand flex items-center justify-center rounded-sm font-serif text-lg sm:text-2xl font-bold">
                   V
                 </div>
                 <h3 className="font-serif text-2xl sm:text-3xl font-semibold text-white mb-4 sm:mb-6">Our Vision</h3>
                 <p className="text-base sm:text-lg text-white/80 leading-relaxed">
-                  To position Bangladesh as a global benchmark for recycled plastic quality and export reliability. We envision a future where &apos;Manufactured in Bangladesh&apos; is universally recognized as a hallmark of premium materials, sustainability, and ethical industrial practices.
+                  To function as a vital industrial stakeholder within Bangladesh&apos;s regional waste recovery infrastructure — delivering measurable environmental risk mitigation, economically supporting the informal labor sector, and advancing the regional transition toward a circular plastics economy where recovered plastics re-enter productive economic use.
                 </p>
               </div>
             </FadeIn>
@@ -85,14 +85,14 @@ export default function MissionVisionContent({ goals = [] }: { goals?: any[] }) 
           <FadeIn>
             <span className="eyebrow">BUSINESS PHILOSOPHY</span>
             <h2 className="font-serif text-brand font-semibold mt-4 mb-6 sm:mb-8" style={{ fontSize: 'clamp(1.625rem, 2vw + 0.75rem, 2.25rem)' }}>
-              Partnership over Procurement
+              Integrated Value Chain
             </h2>
             <div className="space-y-4 sm:space-y-6 text-text-muted leading-relaxed text-base sm:text-lg text-justify">
               <p>
-                In the world of international trade, transactions are easy to come by, but true partnerships are rare. At {companyName}, our philosophy is rooted in long-term collaboration. We do not view our clients merely as buyers, nor our suppliers merely as vendors. We are stakeholders in each other&apos;s success.
+                {companyName} manages a comprehensive and integrated value chain that spans the entire lifecycle of plastic recycling. The operational workflow is organized into a sequential pipeline that begins at the community level and concludes with the distribution of processed industrial materials: Collection → Sorting → Aggregation → Transportation → Cleaning & Processing → Mechanical Recycling → Recycled Plastic Flakes → Downstream Manufacturing.
               </p>
               <p>
-                When we export ready-made garments to Europe, we ensure the factory workers are treated ethically and the buyer receives flawless quality. When we import raw chemicals, we ensure the local manufacturer gets the exact purity they need to keep their production line running. Trade is an ecosystem, and our philosophy is to keep it healthy, transparent, and mutually beneficial.
+                To sustain this workflow, the enterprise has established a decentralized collection infrastructure anchored by a network of 30 dedicated collection centers. This formalized network is strategically supported by the integration of the informal waste sector, specifically engaging waste workers and paddle-van drivers to maximize material recovery. Beyond environmental mitigation, the operations generate measurable socio-economic impact by providing livelihood opportunities across the entire value chain.
               </p>
             </div>
           </FadeIn>
@@ -102,9 +102,9 @@ export default function MissionVisionContent({ goals = [] }: { goals?: any[] }) 
       <section className="section-padding bg-brand text-white">
         <div className="container-wide">
           <SectionHeader
-            eyebrow="LOOKING FORWARD"
-            title="Our Future Goals"
-            description="Continuous improvement and expansion to better serve our global network."
+            eyebrow="OPERATIONAL SCALING"
+            title="5-Year Processing Capacity"
+            description="Projected throughput capabilities over a continuous five-year operational timeline."
             light
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
@@ -122,8 +122,8 @@ export default function MissionVisionContent({ goals = [] }: { goals?: any[] }) 
       </section>
 
       <CTABanner
-        headline="Align with Our Vision"
-        description="Partner with a trading company that shares your commitment to excellence."
+        headline="Partner in the Circular Economy"
+        description="Join our network as a downstream manufacturer, collection partner, or development collaborator."
       />
     </>
   );

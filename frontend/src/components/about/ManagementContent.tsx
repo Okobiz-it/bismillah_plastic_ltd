@@ -272,7 +272,7 @@ export default function ManagementContent({ team = [] }: { team?: any[] }) {
               Leadership & Management
             </h1>
             <p className="text-white/70 text-lg max-w-2xl mx-auto leading-relaxed">
-              Our executive team combines decades of experience in industrial manufacturing, recycled plastic production, and global export logistics.
+              Our team combines experience in waste management, mechanical recycling, community collection networks, and processing operations across the Dinajpur region.
             </p>
           </FadeIn>
         </div>
@@ -303,8 +303,8 @@ export default function ManagementContent({ team = [] }: { team?: any[] }) {
       </AnimatePresence>
 
       <CTABanner
-        headline="Connect With Our Leadership"
-        description="Looking for strategic partnership opportunities? Our executive team is ready to talk."
+        headline="Connect With Our Team"
+        description="Looking for partnership opportunities in plastic waste collection and recycling? Our team is ready to talk."
       />
     </>
   );

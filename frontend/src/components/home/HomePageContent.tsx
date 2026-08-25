@@ -64,13 +64,13 @@ export default function HomePageContent({ products, homeSettings, clients = [], 
           <FadeIn className="max-w-2xl">
             <div className="flex items-center gap-3 mb-6">
               <div className="h-px w-8 bg-emerald-400/80" />
-              <span className="eyebrow text-emerald-400">Recycled Plastic Manufacturer & Exporter</span>
+              <span className="eyebrow text-emerald-400">Plastic Waste Collection & Mechanical Recycling</span>
             </div>
             <h1 className="font-serif fluid-h1 text-white font-bold leading-[1.1] tracking-tight mb-5">
-              Recycled Plastic Chips & Flakes from Bangladesh
+              Plastic Waste Collection & Mechanical Recycling
             </h1>
             <p className="text-base sm:text-lg text-white/60 leading-relaxed mb-8 max-w-lg">
-              High-quality recycled plastic materials manufactured with controlled processing and supplied to manufacturers worldwide.
+              Transforming post-consumer and industrial plastics into high-quality recycled flakes through community-based collection and advanced mechanical processing in Dinajpur, Bangladesh.
             </p>
             <div className="flex flex-wrap gap-3 sm:gap-4 mb-10">
               <Link href="/contact" className="px-6 sm:px-8 py-3 sm:py-3.5 bg-brand hover:bg-brand-light text-white text-xs sm:text-sm font-bold uppercase tracking-wider rounded-sm transition-all duration-200 shadow-lg shadow-black/20 hover:shadow-xl">
@@ -110,7 +110,7 @@ export default function HomePageContent({ products, homeSettings, clients = [], 
             <SectionHeader
               eyebrow="Our Products"
               title="Recycled Plastic Materials"
-              description="High-quality recycled chips and flakes for industrial manufacturing applications."
+              description="High-quality recycled plastic flakes produced through mechanical recycling for downstream manufacturing."
             />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 mt-8 sm:mt-10">
               {displayProducts.map((product, i) => (
@@ -134,8 +134,8 @@ export default function HomePageContent({ products, homeSettings, clients = [], 
         <div className="container-wide">
           <SectionHeader
             eyebrow="Why Choose Us"
-            title="Premium B2B Manufacturing"
-            description="We deliver consistent quality and reliable volume for international manufacturers."
+            title="Integrated Recycling Operations"
+            description="From community-level waste collection to industrial-scale mechanical processing — an end-to-end plastic recycling value chain."
           />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 mt-8 sm:mt-10">
             {manufacturingPillars.map((pillar, i) => (
@@ -179,8 +179,8 @@ export default function HomePageContent({ products, homeSettings, clients = [], 
         <div className="container-wide">
           <SectionHeader
             eyebrow="Our Process"
-            title="From Sourcing to Raw Material"
-            description="A controlled manufacturing process ensuring consistent quality at every stage."
+            title="From Collection to Recycled Material"
+            description="A systematic pipeline transforming plastic waste into reusable materials through mechanical recycling."
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-8 sm:mt-10">
             {homeProcessSteps.map((step, i) => (
@@ -196,7 +196,7 @@ export default function HomePageContent({ products, homeSettings, clients = [], 
             ))}
           </div>
           <div className="text-center mt-6">
-            <Link href="/manufacturing-process" className="text-sm font-bold uppercase text-brand hover:text-brand-light flex items-center justify-center gap-2">
+            <Link href="/business-operations" className="text-sm font-bold uppercase text-brand hover:text-brand-light flex items-center justify-center gap-2">
               Explore Full Process <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
             </Link>
           </div>
@@ -208,9 +208,9 @@ export default function HomePageContent({ products, homeSettings, clients = [], 
         <section className="section-padding bg-ivory">
           <div className="container-wide">
             <SectionHeader
-              eyebrow="Global Logistics"
-              title="Exported Worldwide"
-              description="Seamless logistics from Chattogram Port to manufacturers across international markets."
+              eyebrow="Our Reach"
+              title="Collection & Distribution Network"
+              description="Serving downstream manufacturers with recycled plastic flakes from our Dinajpur-based operations."
             />
             <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {displayRegions.map((region: any, i: number) => (
@@ -233,13 +233,13 @@ export default function HomePageContent({ products, homeSettings, clients = [], 
         </section>
       )}
 
-      {/* ─── OUR SISTER CONCERNS ──────────────────────────────── */}
+      {/* ─── OUR NETWORK ──────────────────────────────────────── */}
       <section className="section-padding bg-white border-y border-stone-light group">
         <div className="container-wide mb-10 text-center">
           <FadeIn>
-            <span className="eyebrow text-brand">OUR SISTER CONCERNS</span>
+            <span className="eyebrow text-brand">OUR NETWORK</span>
             <h2 className="font-serif text-brand font-semibold mt-4 mb-4" style={{ fontSize: 'clamp(1.625rem, 2vw + 0.75rem, 2.25rem)' }}>
-              Our Sister Concerns & Business Entities
+              Our Collection Network & Partners
             </h2>
           </FadeIn>
         </div>
@@ -252,7 +252,7 @@ export default function HomePageContent({ products, homeSettings, clients = [], 
           <SectionHeader
             eyebrow="STANDARDS & COMPLIANCE"
             title="Certifications & Compliance"
-            description="We strictly adhere to global quality benchmarks, international trade compliance regulations, and sustainable sourcing practices across all our import and export operations."
+            description="We adhere to occupational health and safety standards, labor compliance regulations, and environmental best practices across all our recycling operations."
           />
           <div className="flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-6 max-w-6xl mx-auto">
             {certifications.map((cert: any, i: number) => (
@@ -301,10 +301,10 @@ export default function HomePageContent({ products, homeSettings, clients = [], 
         <div className="container-wide relative z-10 text-center max-w-3xl mx-auto px-4">
           <FadeIn>
             <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold mb-4 tracking-tight">
-              Align with Our Vision
+              Partner in the Circular Economy
             </h2>
             <p className="text-white/85 text-sm sm:text-base md:text-lg max-w-2xl mx-auto mb-8 font-normal leading-relaxed">
-              Partner with a trading company that shares your commitment to excellence.
+              Join our network as a downstream manufacturer, supplier, or collection partner.
             </p>
             <Link
               href="/contact"

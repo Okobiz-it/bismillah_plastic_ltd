@@ -9,15 +9,14 @@ export interface ProcessStep {
 }
 
 export const manufacturingSteps: ProcessStep[] = [
-  { step: 1, title: "Raw Material Selection", description: "Sourcing and selecting plastic waste materials suitable for recycling — PET bottles, HDPE containers, PP packaging, and LDPE films." },
-  { step: 2, title: "Sorting", description: "Manual and automated sorting by polymer type, color, and contamination level to ensure material consistency." },
-  { step: 3, title: "Crushing", description: "Size reduction of sorted plastic into small flakes using industrial crushers and granulators." },
-  { step: 4, title: "Washing", description: "Multi-stage hot and cold washing to remove labels, adhesives, dirt, and organic contaminants." },
-  { step: 5, title: "Separation", description: "Float-sink and density separation to remove non-target materials and ensure polymer purity." },
-  { step: 6, title: "Drying", description: "Thermal and centrifugal drying to reduce moisture content to specification levels." },
-  { step: 7, title: "Quality Control", description: "Laboratory testing for IV value, moisture, PVC contamination, color, bulk density, and particle size distribution." },
-  { step: 8, title: "Packing", description: "Weighed and packed into jumbo bags or custom packaging per buyer specifications." },
-  { step: 9, title: "Container Loading & Export", description: "Loaded into shipping containers at our facility, transported to Chattogram Port for international shipment." },
+  { step: 1, title: "Collection", icon: "🏘️", description: "Plastic waste is recovered through a decentralized network of 30 dedicated collection centers across the Dinajpur region, engaging community-level waste workers and paddle-van drivers." },
+  { step: 2, title: "Sorting", icon: "🔍", description: "Collected materials are carefully sorted by polymer type — PET/PETE, HDPE, LDPE, PVC, PP, PS, sachets, mixed plastics, and tires — to ensure material purity for downstream processing." },
+  { step: 3, title: "Aggregation", icon: "📦", description: "Sorted materials are consolidated and aggregated at local collection centers, with additional plastic waste procured from external suppliers under formal, documented arrangements." },
+  { step: 4, title: "Transportation", icon: "🚛", description: "Aggregated materials are transported directly from collection centers to the company's processing facilities at Chawliapotti, Baluadangga and Damail, Biral." },
+  { step: 5, title: "Cleaning & Processing", icon: "💧", description: "Materials undergo rigorous cleaning using both hot-wash and cold-wash processing techniques to ensure purity, hygiene, and quality standards are met before mechanical recycling." },
+  { step: 6, title: "Mechanical Recycling", icon: "⚙️", description: "Cleaned materials are processed through industrial crushers, washers, and dryers to convert them into high-quality recycled plastic flakes meeting downstream manufacturing specifications." },
+  { step: 7, title: "Recycled Plastic Flakes/Materials", icon: "✨", description: "The primary commercial output — high-quality recycled plastic flakes and materials — is prepared and quality-verified for distribution to downstream manufacturers domestically and internationally." },
+  { step: 8, title: "Downstream Manufacturing", icon: "🏭", description: "Refined plastic flakes are supplied directly to downstream manufacturers, serving as crucial feedstock for the secondary manufacturing of fibers, plastic pellets, and various upcycled products." },
 ];
 
 // ─── Quality Control Parameters ───────────────────────────────
@@ -28,15 +27,15 @@ export interface QualityParameter {
 }
 
 export const qualityParameters: QualityParameter[] = [
-  { title: "Raw Material Inspection", description: "Incoming plastic waste is inspected for type, contamination level, and suitability before entering the production line." },
-  { title: "Sorting Control", description: "Automated and manual sorting ensures each batch contains only the target polymer type and color grade." },
-  { title: "Washing Control", description: "Multi-stage washing monitored for water temperature, detergent concentration, and contaminant removal efficiency." },
-  { title: "Moisture Control", description: "Final moisture levels tested to ensure compliance with customer specifications, typically under 1%." },
-  { title: "Contamination Control", description: "PVC content, metal, and foreign material testing performed on every batch to ensure material purity." },
-  { title: "Batch Testing", description: "IV value, melt flow index, color measurement, and bulk density tested per production batch." },
-  { title: "Final Inspection", description: "Complete quality check before packaging — visual inspection, weight verification, and documentation." },
-  { title: "Packaging Inspection", description: "Packaging integrity verified to prevent moisture ingress and contamination during transport." },
-  { title: "Quality Documentation", description: "Comprehensive Certificate of Analysis (COA) and Technical Data Sheets (TDS) issued for complete traceability." },
+  { title: "Raw Material Inspection", description: "Incoming plastic waste is inspected for polymer type, contamination level, and suitability before entering the processing pipeline." },
+  { title: "Sorting Control", description: "Manual sorting ensures each batch contains only the target polymer type — PET, HDPE, LDPE, PVC, PP, or PS — with minimal cross-contamination." },
+  { title: "Hot-Wash Processing", description: "Hot-wash techniques remove adhesives, labels, organic contaminants, and residual impurities to achieve high-purity output materials." },
+  { title: "Cold-Wash Processing", description: "Cold-wash processes complement hot-wash stages for materials requiring gentler treatment while maintaining quality standards." },
+  { title: "Mechanical Processing", description: "Industrial crushers reduce sorted plastic into flakes, followed by washing and separation to ensure polymer purity." },
+  { title: "Drying & Moisture Control", description: "Thermal and centrifugal drying reduces moisture content to specification levels required by downstream manufacturers." },
+  { title: "Contamination Testing", description: "Each batch is tested for foreign material, PVC content, and non-target polymer contamination to ensure material purity." },
+  { title: "Final Quality Inspection", description: "Complete quality check before packaging — visual inspection, weight verification, and documentation of material specifications." },
+  { title: "Quality Documentation", description: "Comprehensive quality records are maintained for complete traceability across the entire processing pipeline." },
 ];
 
 // ─── Sustainability Pillars ───────────────────────────────────
@@ -47,12 +46,12 @@ export interface SustainabilityPillar {
 }
 
 export const sustainabilityPillars: SustainabilityPillar[] = [
-  { title: "Circular Economy", description: "Transforming post-consumer plastic waste into high-quality raw materials, closing the loop in the plastics value chain." },
-  { title: "Plastic Waste Recovery", description: "Diverting plastic waste from landfills and waterways by sourcing and processing material that would otherwise be discarded." },
-  { title: "Resource Efficiency", description: "Our manufacturing process is designed to minimize water usage, energy consumption, and material waste at every stage." },
-  { title: "Waste Reduction", description: "Optimizing sorting and processing to maximize yield and minimize non-recyclable residue from each batch." },
-  { title: "Responsible Sourcing", description: "Working with verified collection networks to ensure ethical and traceable material sourcing practices." },
-  { title: "Environmental Impact", description: "Contributing to reduced virgin plastic production by supplying recycled alternatives to manufacturers worldwide." },
+  { title: "Circular Economy", description: "Converting collected post-consumer waste into reusable recycled materials, directly supporting circular economy principles and creating a closed-loop pathway for recovered plastics." },
+  { title: "Waste Diversion", description: "Intercepting plastic waste that poses documented environmental risks to local land and water resources in Dinajpur, where municipal capabilities have not kept pace with regional growth." },
+  { title: "Resource Recovery", description: "Facilitating large-scale waste diversion and resource recovery, transforming materials that would otherwise be improperly discarded into valuable manufacturing feedstock." },
+  { title: "Virgin Plastic Reduction", description: "Reducing the broader industrial reliance on virgin plastic feedstocks by providing a sustainable and closed-loop pathway for recovered plastics to re-enter productive economic use." },
+  { title: "Community Livelihoods", description: "Generating measurable socio-economic impact by providing livelihood opportunities across the value chain — logistics, administration, collection, and mechanical processing." },
+  { title: "Informal Sector Integration", description: "Actively improving working conditions for community collectors, waste pickers, and truck drivers by integrating them into a formal and structured supply chain." },
 ];
 
 // ─── Product Categories ───────────────────────────────────────
@@ -62,32 +61,34 @@ export interface ProductCategoryInfo {
 }
 
 export const defaultProductCategories: ProductCategoryInfo[] = [
-  { name: "PET Flakes", description: "Recycled polyethylene terephthalate flakes in various colors — clear, green, and brown." },
-  { name: "PET Chips", description: "Recycled PET pellets and chips for direct use in manufacturing and extrusion processes." },
-  { name: "PP Recycled Material", description: "Recycled polypropylene chips and flakes from post-consumer and post-industrial sources." },
-  { name: "HDPE Recycled Material", description: "Recycled high-density polyethylene material suitable for pipe, container, and packaging manufacturing." },
-  { name: "LDPE Recycled Material", description: "Recycled low-density polyethylene material from film and packaging waste sources." },
+  { name: "PET/PETE Flakes", description: "Recycled polyethylene terephthalate flakes processed through hot-wash and cold-wash techniques for downstream fiber and pellet manufacturing." },
+  { name: "HDPE Flakes", description: "Recycled high-density polyethylene flakes suitable for pipe, container, and packaging manufacturing applications." },
+  { name: "LDPE Flakes", description: "Recycled low-density polyethylene material recovered from film and packaging waste sources." },
+  { name: "PP Flakes", description: "Recycled polypropylene flakes from post-consumer and post-industrial sources for injection molding and extrusion." },
+  { name: "PS Flakes", description: "Recycled polystyrene material processed from post-consumer waste for downstream manufacturing." },
+  { name: "PVC Flakes", description: "Recycled polyvinyl chloride material processed through mechanical recycling for industrial applications." },
+  { name: "Mixed Plastic Flakes", description: "Processed flakes from sachets, assorted mixed plastic waste, and miscellaneous plastics." },
 ];
 
-// ─── Homepage Pillars (replacing Import/Export/Supply) ─────────
+// ─── Homepage Pillars ─────────────────────────────────────────
 export const manufacturingPillars = [
   {
-    title: "Manufacturing",
-    description: "State-of-the-art recycling and processing facilities producing high-quality plastic chips and flakes.",
+    title: "Waste Collection",
+    description: "A decentralized network of 30 collection centers across Dinajpur, integrating community collectors and informal waste workers.",
     image: IMAGES.RECYCLING_PROCESS,
-    link: "/manufacturing-process",
+    link: "/business-operations",
     icon: "factory",
   },
   {
-    title: "Quality Control",
-    description: "Rigorous testing and inspection to guarantee that all products meet international standards.",
+    title: "Mechanical Recycling",
+    description: "Industrial-scale processing with crushers, washers, dryers, and dual hot-wash and cold-wash techniques for high-quality output.",
     image: IMAGES.QUALITY_LAB,
     link: "/products",
     icon: "quality",
   },
   {
-    title: "Global Export",
-    description: "Reliable supply of recycled plastic materials to manufacturers across international markets.",
+    title: "Downstream Supply",
+    description: "Supplying high-quality recycled plastic flakes to downstream manufacturers for fiber, pellet, and upcycled product production.",
     image: IMAGES.CONTAINER_LOADING,
     link: "/global-export",
     icon: "export",
@@ -96,8 +97,8 @@ export const manufacturingPillars = [
 
 // ─── Homepage Process Steps ───────────────────────────────────
 export const homeProcessSteps = [
-  { step: 1, title: "Source", description: "We source plastic waste from verified collection networks across Bangladesh." },
-  { step: 2, title: "Process", description: "Multi-stage sorting, crushing, washing, and separation at our factory." },
-  { step: 3, title: "Test", description: "Every batch is lab-tested for IV, moisture, contamination, and particle size." },
-  { step: 4, title: "Export", description: "Packed and shipped via Chattogram Port to manufacturers worldwide." },
+  { step: 1, title: "Collect", description: "Plastic waste is recovered through 30 collection centers and informal waste worker networks across Dinajpur." },
+  { step: 2, title: "Process", description: "Multi-stage sorting, cleaning with hot-wash and cold-wash techniques, and mechanical processing at our facilities." },
+  { step: 3, title: "Recycle", description: "Industrial crushers, washers, and dryers convert cleaned plastics into high-quality recycled flakes." },
+  { step: 4, title: "Supply", description: "Recycled plastic flakes are supplied to downstream manufacturers for fibers, pellets, and upcycled products." },
 ];

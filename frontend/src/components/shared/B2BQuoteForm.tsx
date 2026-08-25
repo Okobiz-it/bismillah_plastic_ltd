@@ -381,7 +381,7 @@ export default function B2BQuoteForm({
                 onChange={handleChange}
                 className={inputCls + " cursor-pointer"}
               >
-                <option value="FOB">FOB – Chattogram Port</option>
+                <option value="FOB">FOB – Dinajpur Facility</option>
                 <option value="CIF">CIF – Cost, Insurance & Freight</option>
                 <option value="CFR">CFR – Cost & Freight</option>
                 <option value="EXW">EXW – Ex Works (Factory)</option>

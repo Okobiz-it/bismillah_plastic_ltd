@@ -85,9 +85,9 @@ function ContactContent() {
         </div>
         <div className="container-wide relative z-10 text-center max-w-3xl mx-auto">
           <SectionHeader
-            eyebrow="GLOBAL INQUIRIES & EXPORT QUOTES"
-            title="Get a Quote & Material Specifications"
-            description="Whether you require bulk container shipments of recycled PET, PP, or HDPE, or need custom technical data sheets — our export team is at your service."
+            eyebrow="INQUIRIES & PARTNERSHIPS"
+            title="Get in Touch"
+            description="Whether you require recycled plastic flakes for downstream manufacturing, want to discuss collection partnerships, or need material specifications — our team is at your service."
             light
             centered={true}
           />
@@ -103,9 +103,9 @@ function ContactContent() {
               <FadeIn>
                 <SimpleQuoteForm
                   productName={productName}
-                  formTitle="Get a Quote & Material Specifications"
-                  formSubtitle="Submit your required plastic grades, company details, and inquiry below."
-                  submitButtonText="Submit quote"
+                  formTitle="Inquire About Recycled Materials"
+                  formSubtitle="Submit your material requirements, company details, and inquiry below."
+                  submitButtonText="Submit inquiry"
                 />
               </FadeIn>
             </div>

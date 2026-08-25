@@ -17,7 +17,7 @@ export const navLinks: NavLink[] = [
     ]
   },
   { label: "Products", href: "/products" },
-  { label: "Manufacturing Process", href: "/manufacturing-process" },
+  { label: "Business Operations", href: "/business-operations" },
   { label: "Global Export", href: "/global-export" },
   { label: "Gallery", href: "/gallery" },
 ];
@@ -30,10 +30,10 @@ export interface Stat {
 }
 
 export const heroStats: Stat[] = [
-  { value: 500, suffix: "+", label: "Tons Monthly Capacity" },
-  { value: 15, suffix: "+", label: "Export Destinations" },
-  { value: 99, suffix: "%", label: "Material Purity" },
-  { value: 100, suffix: "%", label: "Quality Tested" },
+  { value: 15000, suffix: "+", label: "MT Year 1 Capacity" },
+  { value: 30, suffix: "", label: "Collection Centers" },
+  { value: 2, suffix: "", label: "Processing Units" },
+  { value: 24000, suffix: "", label: "MT Year 5 Target" },
 ];
 
 // ─── Certifications ───────────────────────────────────────────
@@ -43,19 +43,19 @@ export interface Certification {
 }
 
 export const certifications: Certification[] = [
-  { name: "ISO 9001:2015", description: "Quality Management System" },
-  { name: "ISO 14001", description: "Environmental Management" },
+  { name: "OHS Compliance", description: "Occupational Health & Safety Standards" },
+  { name: "No Child Labor", description: "Strict Prohibition on Child & Forced Labor" },
   { name: "[CERTIFICATION]", description: "[DESCRIPTION]" },
 ];
 
 // ─── Company Info ─────────────────────────────────────────────
 export const companyInfo = {
   name: "Bismillah Plastic",
-  tagline: "Recycled Plastic Materials — Manufactured in Bangladesh, Supplied Worldwide.",
+  tagline: "Plastic Waste Collection & Mechanical Recycling — Dinajpur, Bangladesh.",
   description:
-    "A recycled plastic chips and flakes manufacturer based in Dinajpur, Bangladesh, producing high-quality PET, PP, HDPE, and LDPE recycled materials for international manufacturers and industrial buyers worldwide.",
-  foundedYear: 2009,
-  address: "Baluadangga, Chauliapotti, Dinajpur.",
+    "A Bangladesh-based enterprise specializing in plastic waste collection and mechanical recycling. Operating out of the Dinajpur region, Bismillah Plastic systematically transforms recovered post-consumer and industrial plastics into high-quality recycled plastic flakes, serving as a critical infrastructural link within the domestic circular economy.",
+  foundedYear: 2016,
+  address: "Chawliapotti, Baluadangga, Dinajpur, Bangladesh",
   phone: "+880 1842-084883",
   email: "bismillahplastic76@gmail.com",
   exportEmail: "bismillahplastic76@gmail.com",

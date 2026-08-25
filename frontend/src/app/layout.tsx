@@ -8,16 +8,16 @@ export async function generateMetadata(): Promise<Metadata> {
   const { companyName, description } = siteConfig;
 
   return {
-    title: `${companyName} — Recycled Plastic Manufacturer & Exporter | Bangladesh`,
+    title: `${companyName} — Plastic Waste Collection & Mechanical Recycling | Dinajpur, Bangladesh`,
     description: description,
-    keywords: "recycled PET flakes, PET flakes manufacturer Bangladesh, recycled plastic exporter, PET chips supplier, plastic recycling company Bangladesh, recycled plastic raw materials, HDPE recycled material, PP recycled material",
+    keywords: "plastic waste recycling Bangladesh, mechanical recycling Dinajpur, recycled plastic flakes, PET HDPE PP recycling, plastic waste collection, circular economy Bangladesh, post-consumer plastic recycling, waste management Dinajpur",
     icons: {
       icon: IMAGES.FAVICON,
       shortcut: IMAGES.FAVICON,
       apple: IMAGES.FAVICON,
     },
     openGraph: {
-      title: `${companyName} — Recycled Plastic Chips & Flakes Manufacturer`,
+      title: `${companyName} — Plastic Waste Collection & Mechanical Recycling`,
       description: description,
       type: "website",
     },
@@ -44,7 +44,7 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Organization",
               "name": siteConfig.companyName,
-              "url": "https://mapleagglobal.com",
+              "url": "https://bismillahplastic.com",
               "logo": IMAGES.MAPLE_LOGO,
               "description": siteConfig.description,
               "address": {
