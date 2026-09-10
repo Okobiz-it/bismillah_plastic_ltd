@@ -41,12 +41,12 @@ const navItems: NavItem[] = [
     subItems: [
       { label: "Mission, Vision & History", href: "/admin/about/mission-vision" },
       { label: "Management", href: "/admin/about/management" },
-      { label: "Gallery", href: "/admin/about/gallery" },
+      { label: "Photos | Videos", href: "/admin/about/gallery" },
     ]
   },
   { label: "Products", href: "/admin/products", icon: FaBoxOpen },
   { label: "Raw Materials", href: "/admin/raw-materials", icon: FaLeaf },
-  { label: "Global Export", href: "/admin/export", icon: FaShip },
+  { label: "Impact", href: "/admin/export", icon: FaGlobeAmericas },
   { label: "Testimonials", href: "/admin/testimonials", icon: FaComments },
   { label: "Quote Requests", href: "/admin/inquiries", icon: FaEnvelope },
 ];

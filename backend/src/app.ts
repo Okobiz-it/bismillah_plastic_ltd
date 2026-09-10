@@ -20,6 +20,7 @@ import inquiriesRoutes from './modules/inquiries/inquiries.routes.js';
 import settingsRoutes from './modules/settings/settings.routes.js';
 import networkRoutes from './modules/network/network.routes.js';
 import rawMaterialsRoutes from './modules/raw-materials/raw-materials.routes.js';
+import mediaRoutes from './modules/media/media.routes.js';
 
 const app = express();
 
@@ -65,6 +66,7 @@ app.use('/api/inquiries', inquiriesRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/network', networkRoutes);
 app.use('/api/raw-materials', rawMaterialsRoutes);
+app.use('/api/media', mediaRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

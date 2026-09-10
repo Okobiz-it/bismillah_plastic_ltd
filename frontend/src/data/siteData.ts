@@ -18,8 +18,8 @@ export const navLinks: NavLink[] = [
   },
   { label: "Products", href: "/products" },
   { label: "Business Operations", href: "/business-operations" },
-  { label: "Global Export", href: "/global-export" },
-  { label: "Gallery", href: "/gallery" },
+  { label: "Impact", href: "/impact" },
+  { label: "Photos | Videos", href: "/photos-videos" },
 ];
 
 // ─── Stats ────────────────────────────────────────────────────

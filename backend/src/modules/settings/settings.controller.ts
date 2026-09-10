@@ -60,3 +60,16 @@ export const updateSettings = async (req: Request, res: Response, next: NextFunc
     next(error);
   }
 };
+
+export const uploadSettingsImage = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (!req.file) {
+      sendError(res, 400, 'No image file provided');
+      return;
+    }
+    const imageUrl = await optimizeAndUploadImage(req.file.buffer, 'bismillah_plastic/impact');
+    sendResponse(res, 200, { imageUrl });
+  } catch (error) {
+    next(error);
+  }
+};

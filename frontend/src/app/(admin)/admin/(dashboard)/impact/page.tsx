@@ -4,6 +4,6 @@ export const metadata = {
   title: "Admin - Impact & Export Settings",
 };
 
-export default function AdminExportPage() {
+export default function AdminImpactPage() {
   return <ExportAdminContent />;
 }

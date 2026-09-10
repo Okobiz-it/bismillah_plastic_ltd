@@ -4,6 +4,6 @@ export const metadata = {
   title: "Photos & Videos | Admin | Bismillah Plastic",
 };
 
-export default function GalleryAdminPage() {
+export default function AdminPhotosVideosPage() {
   return <GalleryAdminContent />;
 }

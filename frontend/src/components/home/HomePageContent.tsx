@@ -225,8 +225,8 @@ export default function HomePageContent({ products, homeSettings, clients = [], 
               ))}
             </div>
             <div className="text-center mt-10">
-              <Link href="/global-export" className="text-sm font-bold uppercase text-brand hover:text-brand-light flex items-center justify-center gap-2">
-                View Export Capabilities <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+              <Link href="/impact" className="text-sm font-bold uppercase text-brand hover:text-brand-light flex items-center justify-center gap-2">
+                Explore Sustainability & Impact <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
               </Link>
             </div>
           </div>

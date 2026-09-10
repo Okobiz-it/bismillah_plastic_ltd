@@ -87,10 +87,10 @@ export const manufacturingPillars = [
     icon: "quality",
   },
   {
-    title: "Downstream Supply",
-    description: "Supplying high-quality recycled plastic flakes to downstream manufacturers for fiber, pellet, and upcycled product production.",
+    title: "Downstream Supply & Impact",
+    description: "Supplying high-quality recycled plastic flakes to downstream manufacturers while driving circular economy impact and grassroots inclusion.",
     image: IMAGES.CONTAINER_LOADING,
-    link: "/global-export",
+    link: "/impact",
     icon: "export",
   },
 ];
