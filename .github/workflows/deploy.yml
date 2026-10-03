@@ -150,13 +150,16 @@ jobs:
             # Source user bash environment
             [ -f ~/.bashrc ] && source ~/.bashrc 2>/dev/null || true
 
-            # Ensure Node.js & npm are in PATH (checks standard paths & cPanel nodevenv)
+            # Ensure we use the latest Node.js available (avoid Node 8/10 syntax errors)
             export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:$HOME/bin
-            for node_bin in "$HOME"/nodevenv/backend/*/bin "$HOME"/nodevenv/frontend/*/bin /opt/cpanel/ea-nodejs*/bin /opt/alt/alt-nodejs*/root/usr/bin; do
-              if [ -d "$node_bin" ]; then
-                export PATH="$node_bin:$PATH"
-              fi
+            
+            # Explicitly look for higher Node versions first
+            for v in 22 20 18 16; do
+              if [ -d "/opt/alt/alt-nodejs$v/root/usr/bin" ]; then export PATH="/opt/alt/alt-nodejs$v/root/usr/bin:$PATH"; break; fi
+              if [ -d "/opt/cpanel/ea-nodejs$v/bin" ]; then export PATH="/opt/cpanel/ea-nodejs$v/bin:$PATH"; break; fi
             done
+            
+            echo "Using Node version: $(node -v)"
 
             echo "=== 1. Setting up Backend Dependencies & Restarting ==="
             cd "$HOME/backend"
