@@ -1,0 +1,202 @@
+name: Deploy to cPanel via SSH
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: production-deployment
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
+
+      # ----------------------------------------------------
+      # 1. BUILD BACKEND (TypeScript -> dist)
+      # ----------------------------------------------------
+      - name: Install & Build Backend
+        run: |
+          echo "Building Backend..."
+          cd backend
+          npm ci
+          npm run build
+          cd ..
+
+      # ----------------------------------------------------
+      # 2. BUILD FRONTEND (Next.js Production Bundle)
+      # ----------------------------------------------------
+      - name: Prepare Frontend .env & Build
+        env:
+          FRONTEND_ENV: ${{ secrets.FRONTEND_ENV }}
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'https://api.bismillahplastic.com/api' }}
+          NEXT_PUBLIC_SITE_DOMAIN: ${{ secrets.NEXT_PUBLIC_SITE_DOMAIN || 'bismillahplastic.com' }}
+          NEXT_PUBLIC_ADMIN_DOMAIN: ${{ secrets.NEXT_PUBLIC_ADMIN_DOMAIN || 'admin.bismillahplastic.com' }}
+        run: |
+          echo "Preparing Frontend .env..."
+          cd frontend
+          if [ -n "$FRONTEND_ENV" ]; then
+            echo "$FRONTEND_ENV" > .env
+          else
+            cat << EOF > .env
+NODE_ENV=production
+NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+NEXT_PUBLIC_SITE_DOMAIN=$NEXT_PUBLIC_SITE_DOMAIN
+NEXT_PUBLIC_ADMIN_DOMAIN=$NEXT_PUBLIC_ADMIN_DOMAIN
+EOF
+          fi
+          echo "Building Frontend..."
+          npm ci
+          npm run build
+          cd ..
+
+      # ----------------------------------------------------
+      # 3. SETUP SSH AGENT & KNOWN HOSTS
+      # ----------------------------------------------------
+      - name: Setup SSH Keys
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      - name: Add Remote Host to Known Hosts
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT || 22 }}
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts
+
+      # ----------------------------------------------------
+      # 4. DEPLOY BACKEND TO cPanel
+      # ----------------------------------------------------
+      - name: Rsync Backend to Server
+        env:
+          SSH_USER: ${{ secrets.SSH_USER || 'bismill6' }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT || 22 }}
+        run: |
+          echo "Deploying Backend to /home/$SSH_USER/backend/ ..."
+          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "mkdir -p /home/$SSH_USER/backend"
+          rsync -avz \
+            -e "ssh -p $SSH_PORT" \
+            --exclude '.git*' \
+            --exclude '.env*' \
+            --exclude '.htaccess*' \
+            --exclude '.well-known*' \
+            --exclude 'src' \
+            --exclude 'scripts' \
+            --exclude 'node_modules' \
+            --exclude 'tmp' \
+            backend/dist \
+            backend/server.js \
+            backend/package.json \
+            backend/package-lock.json \
+            $SSH_USER@$SSH_HOST:/home/$SSH_USER/backend/
+
+      # ----------------------------------------------------
+      # 5. DEPLOY FRONTEND TO cPanel
+      # ----------------------------------------------------
+      - name: Rsync Frontend to Server
+        env:
+          SSH_USER: ${{ secrets.SSH_USER || 'bismill6' }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT || 22 }}
+        run: |
+          echo "Deploying Frontend to /home/$SSH_USER/frontend/ ..."
+          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "mkdir -p /home/$SSH_USER/frontend"
+          rsync -avz \
+            -e "ssh -p $SSH_PORT" \
+            --exclude '.git*' \
+            --exclude '.env*' \
+            --exclude '.htaccess*' \
+            --exclude '.well-known*' \
+            --exclude 'src' \
+            --exclude 'node_modules' \
+            --exclude 'tmp' \
+            frontend/.next \
+            frontend/public \
+            frontend/server.js \
+            frontend/next.config.ts \
+            frontend/package.json \
+            frontend/package-lock.json \
+            $SSH_USER@$SSH_HOST:/home/$SSH_USER/frontend/
+
+      # ----------------------------------------------------
+      # 6. SYNC PRODUCTION .ENV FILES FROM GITHUB SECRETS
+      # ----------------------------------------------------
+      - name: Sync .env Files to Server
+        env:
+          SSH_USER: ${{ secrets.SSH_USER || 'bismill6' }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT || 22 }}
+          BACKEND_ENV: ${{ secrets.BACKEND_ENV }}
+          FRONTEND_ENV: ${{ secrets.FRONTEND_ENV }}
+        run: |
+          if [ -n "$BACKEND_ENV" ]; then
+            echo "Syncing backend .env from BACKEND_ENV secret..."
+            printf "%s\n" "$BACKEND_ENV" | ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "cat > /home/$SSH_USER/backend/.env && chmod 600 /home/$SSH_USER/backend/.env"
+          fi
+
+          if [ -n "$FRONTEND_ENV" ]; then
+            echo "Syncing frontend .env from FRONTEND_ENV secret..."
+            printf "%s\n" "$FRONTEND_ENV" | ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "cat > /home/$SSH_USER/frontend/.env && chmod 600 /home/$SSH_USER/frontend/.env"
+          else
+            printf "NODE_ENV=production\nNEXT_PUBLIC_API_URL=%s\nNEXT_PUBLIC_SITE_DOMAIN=%s\nNEXT_PUBLIC_ADMIN_DOMAIN=%s\n" \
+              "${{ secrets.NEXT_PUBLIC_API_URL || 'https://api.bismillahplastic.com/api' }}" \
+              "${{ secrets.NEXT_PUBLIC_SITE_DOMAIN || 'bismillahplastic.com' }}" \
+              "${{ secrets.NEXT_PUBLIC_ADMIN_DOMAIN || 'admin.bismillahplastic.com' }}" \
+              | ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "cat > /home/$SSH_USER/frontend/.env && chmod 600 /home/$SSH_USER/frontend/.env"
+          fi
+
+      # ----------------------------------------------------
+      # 7. INSTALL DEPS ON SERVER & RESTART PASSENGER APPS
+      # ----------------------------------------------------
+      - name: Install Production Dependencies & Restart Passenger Apps
+        env:
+          SSH_USER: ${{ secrets.SSH_USER || 'bismill6' }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT || 22 }}
+        run: |
+          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "bash -s" << 'EOF'
+            set -e
+
+            # Source user bash environment
+            [ -f ~/.bashrc ] && source ~/.bashrc 2>/dev/null || true
+
+            # Ensure Node.js & npm are in PATH (checks standard paths & cPanel nodevenv)
+            export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:$HOME/bin
+            for node_bin in "$HOME"/nodevenv/backend/*/bin "$HOME"/nodevenv/frontend/*/bin /opt/cpanel/ea-nodejs*/bin /opt/alt/alt-nodejs*/root/usr/bin; do
+              if [ -d "$node_bin" ]; then
+                export PATH="$node_bin:$PATH"
+              fi
+            done
+
+            echo "=== 1. Setting up Backend Dependencies & Restarting ==="
+            cd "$HOME/backend"
+            npm install --omit=dev --no-audit --no-fund
+            mkdir -p tmp
+            touch tmp/restart.txt
+
+            echo "=== 2. Setting up Frontend Dependencies & Restarting ==="
+            cd "$HOME/frontend"
+            npm install --omit=dev --no-audit --no-fund
+            mkdir -p tmp
+            touch tmp/restart.txt
+
+            echo "=== Deployment Completed Successfully! ==="
+          EOF

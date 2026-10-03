@@ -388,46 +388,46 @@ export default function ImpactPageContent({ data }: ImpactPageContentProps) {
             </div>
           </FadeIn>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-stretch">
             {sdgs.items.map((item, idx) => (
-              <FadeIn key={item.id} delay={idx * 0.08}>
-                <div className="bg-white rounded-sm border border-stone-200 shadow-sm hover:shadow-md hover:border-brand/40 transition-all duration-300 flex flex-col h-full overflow-hidden">
+              <FadeIn key={item.id} delay={idx * 0.08} className="h-full flex flex-col">
+                <div className="bg-white rounded-sm border border-stone-200 shadow-sm hover:shadow-md hover:border-brand/40 transition-all duration-300 flex flex-col h-full min-h-[460px] sm:min-h-[470px] md:min-h-[480px] overflow-hidden">
                   {/* SDG Card Header */}
                   <div
-                    className="px-6 py-4 text-white flex items-center justify-between"
+                    className="px-6 py-4 text-white flex items-center justify-between min-h-[96px] md:min-h-[104px]"
                     style={{ backgroundColor: item.badgeColor }}
                   >
-                    <div>
-                      <span className="text-xs uppercase font-bold tracking-wider opacity-90 block">
+                    <div className="flex-1 pr-3">
+                      <span className="text-xs uppercase font-bold tracking-wider opacity-90 block mb-1">
                         {item.sdgNumbers}
                       </span>
-                      <h3 className="font-serif text-lg font-bold text-white leading-tight">
+                      <h3 className="font-serif text-base sm:text-lg font-bold text-white leading-snug">
                         {item.sdgTitles}
                       </h3>
                     </div>
-                    <FaGlobeAmericas className="text-white/40 text-2xl shrink-0 ml-3" />
+                    <FaGlobeAmericas className="text-white/40 text-2xl shrink-0 ml-2" />
                   </div>
 
                   {/* SDG Card Body */}
-                  <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
+                  <div className="p-6 flex-1 flex flex-col">
                     {/* The Narrative */}
-                    <div>
+                    <div className="min-h-[68px] sm:min-h-[76px] flex flex-col justify-start">
                       <div className="flex items-center gap-2 mb-1.5">
                         <span className="text-xs font-bold uppercase tracking-wider text-stone-500">
                           The Narrative
                         </span>
                       </div>
-                      <p className="font-serif text-base font-semibold text-brand italic">
+                      <p className="font-serif text-base font-semibold text-brand italic leading-snug">
                         "{item.narrative}"
                       </p>
                     </div>
 
-                    <div className="h-px w-full bg-stone-100" />
+                    <div className="h-px w-full bg-stone-100 my-4" />
 
                     {/* The Proof Point */}
-                    <div>
-                      <div className="flex items-center gap-2 mb-1.5">
-                        <FaCheckCircle className="text-brand text-xs" />
+                    <div className="flex-1 flex flex-col">
+                      <div className="flex items-center gap-2 mb-2">
+                        <FaCheckCircle className="text-brand text-xs shrink-0" />
                         <span className="text-xs font-bold uppercase tracking-wider text-brand">
                           The Proof Point
                         </span>

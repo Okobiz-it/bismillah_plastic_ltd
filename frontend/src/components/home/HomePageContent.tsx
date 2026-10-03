@@ -13,12 +13,12 @@ import TestimonialCarousel from "@/components/shared/TestimonialCarousel";
 import LogoMarquee from "@/components/shared/LogoMarquee";
 import CTABanner from "@/components/shared/CTABanner";
 import ProductCard from "@/components/shared/ProductCard";
-import QuoteModal from "@/components/shared/QuoteModal";
 import SafeImage from "@/components/shared/SafeImage";
-import ImageModal from "@/components/shared/ImageModal";
-import B2BQuoteForm from "@/components/shared/B2BQuoteForm";
 import { useGlobalSettings } from "@/context/GlobalSettingsContext";
-import { tradeRegions } from "@/data/content";
+import dynamic from "next/dynamic";
+
+const QuoteModal = dynamic(() => import("@/components/shared/QuoteModal"), { ssr: false });
+const ImageModal = dynamic(() => import("@/components/shared/ImageModal"), { ssr: false });
 
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   return (
@@ -48,7 +48,6 @@ export default function HomePageContent({ products, homeSettings, clients = [], 
   const timelineRef = useRef<HTMLDivElement>(null);
   const timelineInView = useInView(timelineRef, { once: true, margin: "-100px" });
 
-  const displayRegions = exportRegions && exportRegions.length > 0 ? exportRegions : tradeRegions;
   const featuredProducts = products.filter((p: any) => p.featured).slice(0, 3);
   const displayProducts = featuredProducts.length > 0 ? featuredProducts : products.slice(0, 3);
 
@@ -57,7 +56,16 @@ export default function HomePageContent({ products, homeSettings, clients = [], 
       {/* ─── HERO ─────────────────────────────────────────────── */}
       <section className="relative min-h-[85vh] sm:min-h-[90vh] flex items-center bg-charcoal overflow-hidden">
         <div className="absolute inset-0">
-          <SafeImage src={IMAGES.HERO_FACTORY} alt="Recycled plastic manufacturing facility" useNextImage={true} fill className="object-cover" />
+          <SafeImage
+            src={IMAGES.HERO_FACTORY}
+            alt="Recycled plastic manufacturing facility"
+            useNextImage={true}
+            fill
+            priority
+            sizes="100vw"
+            quality={80}
+            className="object-cover"
+          />
           <div className="absolute inset-0 bg-gradient-to-r from-charcoal/90 via-charcoal/75 to-charcoal/50" />
         </div>
         <div className="w-full container-wide relative z-10 py-20 sm:py-24">
@@ -189,7 +197,7 @@ export default function HomePageContent({ products, homeSettings, clients = [], 
                   <div className="absolute -left-[17px] top-0 w-8 h-8 rounded-full bg-brand text-white flex items-center justify-center text-sm font-bold border-4 border-warm-white">
                     {step.step}
                   </div>
-                  <h4 className="font-serif text-lg text-brand font-semibold mb-1">{step.title}</h4>
+                  <h3 className="font-serif text-lg text-brand font-semibold mb-1">{step.title}</h3>
                   <p className="text-text-muted text-sm leading-relaxed">{step.description}</p>
                 </div>
               </FadeIn>
@@ -202,36 +210,6 @@ export default function HomePageContent({ products, homeSettings, clients = [], 
           </div>
         </div>
       </section>
-
-      {/* ─── GLOBAL EXPORT ────────────────────────────────────── */}
-      {displayRegions && displayRegions.length > 0 && (
-        <section className="section-padding bg-ivory">
-          <div className="container-wide">
-            <SectionHeader
-              eyebrow="Our Reach"
-              title="Collection & Distribution Network"
-              description="Serving downstream manufacturers with recycled plastic flakes from our Dinajpur-based operations."
-            />
-            <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {displayRegions.map((region: any, i: number) => (
-                <div key={i} className="bg-white p-6 rounded border border-stone-200 shadow-sm hover:border-brand/50 transition-colors">
-                  <h3 className="text-xl font-bold text-brand font-serif mb-2">{region.name}</h3>
-                  <p className="text-sm text-stone-500 mb-4">{region.countries}</p>
-                  <div className="flex flex-col gap-1 text-xs font-semibold text-stone-700">
-                    <span>Products: <span className="font-normal text-stone-500">{region.keyProducts}</span></span>
-                    <span>Reach: <span className="font-normal text-stone-500">{region.stats}</span></span>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="text-center mt-10">
-              <Link href="/impact" className="text-sm font-bold uppercase text-brand hover:text-brand-light flex items-center justify-center gap-2">
-                Explore Sustainability & Impact <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-              </Link>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* ─── OUR NETWORK ──────────────────────────────────────── */}
       <section className="section-padding bg-white border-y border-stone-light group">

@@ -1,8 +1,21 @@
 import type { Metadata } from "next";
+import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/config/siteConfig";
 
 import { IMAGES } from "@/constants/images";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-sans",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-serif",
+});
 
 export async function generateMetadata(): Promise<Metadata> {
   const { companyName, description } = siteConfig;
@@ -33,10 +46,10 @@ export default function RootLayout({
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className="h-full antialiased selection:bg-brand/30 selection:text-white scroll-smooth"
+      className={`${inter.variable} ${spaceGrotesk.variable} h-full antialiased selection:bg-brand/30 selection:text-white scroll-smooth`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col" suppressHydrationWarning>
+      <body className="min-h-full flex flex-col font-sans" suppressHydrationWarning>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

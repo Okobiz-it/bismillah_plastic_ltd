@@ -99,9 +99,9 @@ export default function Footer() {
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:contents gap-4 sm:gap-6 lg:gap-8">
             {/* Column 2: Quick Links */}
             <div className="lg:col-span-2">
-              <h5 className="text-xs font-semibold uppercase tracking-widest text-brand mb-5">
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-brand mb-5">
                 Quick Links
-              </h5>
+              </h3>
               <ul className="space-y-3">
                 {navLinks.filter(l => !l.children).map((link) => (
                   <li key={link.href}>
@@ -118,9 +118,9 @@ export default function Footer() {
 
             {/* Column 3: Contact Details */}
             <div className="lg:col-span-3">
-              <h5 className="text-xs font-semibold uppercase tracking-widest text-brand mb-5">
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-brand mb-5">
                 Contact Us
-              </h5>
+              </h3>
               <ul className="space-y-3 sm:space-y-5 text-sm">
                 <li>
                   <span className="text-stone-500 text-xs uppercase tracking-wider font-semibold">Location</span>
@@ -140,11 +140,12 @@ export default function Footer() {
 
           {/* Column 4: Location Map */}
           <div className="lg:col-span-3">
-            <h5 className="text-xs font-semibold uppercase tracking-widest text-brand mb-5">
+            <h3 className="text-xs font-semibold uppercase tracking-widest text-brand mb-5">
               Location Map
-            </h5>
+            </h3>
             <div className="w-full bg-white rounded-md overflow-hidden border border-stone-200 shadow-sm p-1">
               <iframe
+                title="Bismillah Plastic Ltd Factory Location Map in Dinajpur"
                 src="https://maps.google.com/maps?q=Baluadangga%2C%20Chauliapotti%2C%20Dinajpur&t=&z=15&ie=UTF8&iwloc=&output=embed"
                 width="100%"
                 height="150"

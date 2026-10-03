@@ -12,6 +12,21 @@ interface SafeImageProps extends Omit<ImageProps, "src" | "alt"> {
   useNextImage?: boolean;
 }
 
+const LEGACY_URL_REPLACEMENTS: Record<string, string> = {
+  "https://res.cloudinary.com/wpttnkjq/image/upload/v1786514994/factory-sorting_t3y7kp.jpg":
+    "https://res.cloudinary.com/wpttnkjq/image/upload/v1787231528/factory_iamge_bxnjhs.jpg",
+  "https://res.cloudinary.com/wpttnkjq/image/upload/v1786514995/plastic-flakes_w4iunf.jpg":
+    "https://res.cloudinary.com/wpttnkjq/image/upload/v1787633413/www.beatsnoop.com-3000-cXTuIajikM_pkzl8e.jpg",
+  "https://res.cloudinary.com/wpttnkjq/image/upload/v1786514996/port-hero_qvfoo7.jpg":
+    "https://res.cloudinary.com/wpttnkjq/image/upload/f_auto,q_auto/v1786514996/cargo-ship_qffeko.jpg",
+  "https://res.cloudinary.com/wpttnkjq/image/upload/v1786514997/sustainability-hero_m1k9vb.jpg":
+    "https://res.cloudinary.com/wpttnkjq/image/upload/v1787633414/www.beatsnoop.com-3000-H7qxWhOneT_pru67a.jpg",
+  "https://res.cloudinary.com/wpttnkjq/image/upload/v1786514994/factory-hero_t5w6re.jpg":
+    "https://res.cloudinary.com/wpttnkjq/image/upload/f_auto,q_auto/v1787229103/hero-facility_cluoha.jpg",
+  "https://res.cloudinary.com/wpttnkjq/image/upload/v1786514994/lab-testing_x8j2qa.jpg":
+    "https://res.cloudinary.com/wpttnkjq/image/upload/v1787230580/www.beatsnoop.com-3000-zWBaYXgP7h_ypqeah.jpg",
+};
+
 export default function SafeImage({
   src,
   alt,
@@ -33,7 +48,11 @@ export default function SafeImage({
     ) {
       return fallbackSrc;
     }
-    return inputSrc;
+    const cleanSrc = inputSrc.trim();
+    if (LEGACY_URL_REPLACEMENTS[cleanSrc]) {
+      return LEGACY_URL_REPLACEMENTS[cleanSrc];
+    }
+    return cleanSrc;
   };
 
   const [imgSrc, setImgSrc] = useState<string>(() => getValidSrc(src));

@@ -26,6 +26,9 @@ const app = express();
 
 // CORS configuration allowing production frontend and localhost
 const allowedOrigins = [
+  'https://bismillahplastic.com',
+  'https://www.bismillahplastic.com',
+  'https://admin.bismillahplastic.com',
   'https://maple-ag.vercel.app',
   'http://localhost:3000',
   'http://localhost:5000',

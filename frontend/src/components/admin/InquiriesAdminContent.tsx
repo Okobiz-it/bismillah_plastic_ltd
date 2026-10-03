@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { fetchApi } from "@/lib/api";
 import { useToast } from "@/context/ToastContext";
 import RichTextEditor from "@/components/shared/RichTextEditor";
@@ -63,6 +63,7 @@ export default function InquiriesAdminContent() {
   const [sendingReply, setSendingReply] = useState(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 10;
+  const tableContainerRef = useRef<HTMLDivElement>(null);
   const toast = useToast();
 
   const loadInquiries = async () => {
@@ -178,6 +179,35 @@ export default function InquiriesAdminContent() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedInquiries = filteredInquiries.slice(startIndex, startIndex + itemsPerPage);
 
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages, currentPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    if (tableContainerRef.current) {
+      const rect = tableContainerRef.current.getBoundingClientRect();
+      if (rect.top < 0) {
+        tableContainerRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  };
+
+  const getPageNumbers = () => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+    if (currentPage <= 4) {
+      return [1, 2, 3, 4, 5, "ellipsis", totalPages];
+    }
+    if (currentPage >= totalPages - 3) {
+      return [1, "ellipsis", totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+    }
+    return [1, "ellipsis", currentPage - 1, currentPage, currentPage + 1, "ellipsis", totalPages];
+  };
+
   const counts = {
     all: inquiries.length,
     export: inquiries.filter((i) => (i.category || "general").toLowerCase() === "export").length,
@@ -260,7 +290,7 @@ export default function InquiriesAdminContent() {
       </div>
 
       {/* Main Container */}
-      <div className="admin-table-container animate-fadeIn bg-white !p-0">
+      <div ref={tableContainerRef} className="admin-table-container animate-fadeIn bg-white !p-0">
         <div className="p-2.5 sm:p-4 border-b border-stone-200 flex flex-col md:flex-row justify-between gap-2.5 sm:gap-4">
           <div className="flex gap-1.5 sm:gap-2">
             {["all", "export", "general"].map((tab) => (
@@ -337,6 +367,67 @@ export default function InquiriesAdminContent() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Bar */}
+        {filteredInquiries.length > 0 && (
+          <div className="px-3 py-2 sm:px-4 sm:py-2.5 border-t border-stone-200 bg-stone-50/50 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div className="text-[11px] sm:text-xs text-stone-500">
+              Showing <span className="font-semibold text-brand">{startIndex + 1}</span> to{" "}
+              <span className="font-semibold text-brand">
+                {Math.min(startIndex + itemsPerPage, filteredInquiries.length)}
+              </span>{" "}
+              of <span className="font-semibold text-brand">{filteredInquiries.length}</span> inquiries
+            </div>
+
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
+                disabled={currentPage === 1}
+                className="h-7 px-2.5 text-[11px] sm:text-xs font-semibold rounded border border-stone-300 bg-white hover:bg-stone-50 disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1 text-stone-700 transition-colors cursor-pointer shadow-2xs"
+                title="Previous Page"
+              >
+                <FaChevronLeft size={9} /> Prev
+              </button>
+
+              <div className="flex items-center gap-1">
+                {getPageNumbers().map((pageNum, idx) =>
+                  pageNum === "ellipsis" ? (
+                    <span
+                      key={`ellipsis-${idx}`}
+                      className="w-6 h-7 flex items-center justify-center text-stone-400 text-xs select-none"
+                    >
+                      …
+                    </span>
+                  ) : (
+                    <button
+                      key={pageNum}
+                      type="button"
+                      onClick={() => handlePageChange(pageNum as number)}
+                      className={`w-7 h-7 text-[11px] sm:text-xs font-bold rounded transition-colors cursor-pointer flex items-center justify-center ${
+                        currentPage === pageNum
+                          ? "bg-brand text-white shadow-2xs"
+                          : "bg-white text-stone-600 hover:bg-stone-100 border border-stone-200"
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  )
+                )}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="h-7 px-2.5 text-[11px] sm:text-xs font-semibold rounded border border-stone-300 bg-white hover:bg-stone-50 disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1 text-stone-700 transition-colors cursor-pointer shadow-2xs"
+                title="Next Page"
+              >
+                Next <FaChevronRight size={9} />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* DETAIL MODAL */}

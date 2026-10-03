@@ -97,7 +97,7 @@ export default function AdminDashboardLayoutContent({
           className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${
             // Desktop: offset by sidebar width
             isCollapsed ? "lg:ml-[80px]" : "lg:ml-64"
-          }`}
+            }`}
         >
           <AdminTopbar onMenuClick={openMobileDrawer} />
           <main className="flex-1 p-4 sm:p-5 md:p-6 overflow-y-auto">

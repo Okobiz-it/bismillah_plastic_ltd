@@ -82,6 +82,7 @@ export default function ProductsAdminContent() {
   const [viewMode, setViewMode] = useState<"table" | "grid">("table");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 10;
+  const productsContainerRef = useRef<HTMLDivElement>(null);
 
   const toast = useToast();
 
@@ -400,6 +401,98 @@ export default function ProductsAdminContent() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedProducts = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
 
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages, currentPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    if (productsContainerRef.current) {
+      const rect = productsContainerRef.current.getBoundingClientRect();
+      if (rect.top < 0) {
+        productsContainerRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  };
+
+  const getPageNumbers = () => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+    if (currentPage <= 4) {
+      return [1, 2, 3, 4, 5, "ellipsis", totalPages];
+    }
+    if (currentPage >= totalPages - 3) {
+      return [1, "ellipsis", totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+    }
+    return [1, "ellipsis", currentPage - 1, currentPage, currentPage + 1, "ellipsis", totalPages];
+  };
+
+  const renderPagination = () => {
+    if (filteredProducts.length === 0) return null;
+    return (
+      <div className="px-3 py-2 sm:px-4 sm:py-2.5 border-t border-stone-200 bg-stone-50/50 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div className="text-[11px] sm:text-xs text-stone-500">
+          Showing <span className="font-semibold text-brand">{startIndex + 1}</span> to{" "}
+          <span className="font-semibold text-brand">
+            {Math.min(startIndex + itemsPerPage, filteredProducts.length)}
+          </span>{" "}
+          of <span className="font-semibold text-brand">{filteredProducts.length}</span> products
+        </div>
+
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
+            disabled={currentPage === 1}
+            className="h-7 px-2.5 text-[11px] sm:text-xs font-semibold rounded border border-stone-300 bg-white hover:bg-stone-50 disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1 text-stone-700 transition-colors cursor-pointer shadow-2xs"
+            title="Previous Page"
+          >
+            <FaChevronLeft size={9} /> Prev
+          </button>
+
+          <div className="flex items-center gap-1">
+            {getPageNumbers().map((pageNum, idx) =>
+              pageNum === "ellipsis" ? (
+                <span
+                  key={`ellipsis-${idx}`}
+                  className="w-6 h-7 flex items-center justify-center text-stone-400 text-xs select-none"
+                >
+                  …
+                </span>
+              ) : (
+                <button
+                  key={pageNum}
+                  type="button"
+                  onClick={() => handlePageChange(pageNum as number)}
+                  className={`w-7 h-7 text-[11px] sm:text-xs font-bold rounded transition-colors cursor-pointer flex items-center justify-center ${
+                    currentPage === pageNum
+                      ? "bg-brand text-white shadow-2xs"
+                      : "bg-white text-stone-600 hover:bg-stone-100 border border-stone-200"
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              )
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="h-7 px-2.5 text-[11px] sm:text-xs font-semibold rounded border border-stone-300 bg-white hover:bg-stone-50 disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1 text-stone-700 transition-colors cursor-pointer shadow-2xs"
+            title="Next Page"
+          >
+            Next <FaChevronRight size={9} />
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   const featuredCount = products.filter((p) => p.featured).length;
 
   return (
@@ -481,7 +574,7 @@ export default function ProductsAdminContent() {
           <FaSpinner className="animate-spin text-3xl mx-auto mb-4" />
         </div>
       ) : viewMode === "table" ? (
-        <div className="admin-table-container bg-white">
+        <div ref={productsContainerRef} className="admin-table-container bg-white">
           <table className="admin-table min-w-[550px] sm:min-w-[650px]">
             <thead>
               <tr>
@@ -533,40 +626,58 @@ export default function ProductsAdminContent() {
                   </td>
                 </tr>
               ))}
+              {filteredProducts.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="py-12 text-center text-stone-400">No products found.</td>
+                </tr>
+              )}
             </tbody>
           </table>
+          {renderPagination()}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {paginatedProducts.map((product) => (
-            <div key={product._id} className="bg-white rounded-lg border border-stone-200 overflow-hidden">
-              <SafeImage src={product.imageUrl} alt={product.name} width={400} height={225} className="w-full object-cover" />
-              <div className="p-4">
-                <h3 className="font-serif font-semibold text-brand">{product.name}</h3>
-                <p className="text-xs text-stone-500 mt-1">{product.category}</p>
-                <div className="mt-3 flex items-center justify-between">
-                  <button
-                    type="button"
-                    onClick={() => handleToggleFeatured(product)}
-                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer ${
-                      product.featured
-                        ? "bg-gold/20 text-gold-dark"
-                        : featuredCount >= 3
-                        ? "bg-stone-100 text-stone-400 opacity-60 cursor-not-allowed"
-                        : "bg-stone-100 text-stone-600 hover:bg-gold/10"
-                    }`}
-                  >
-                    <FaStar size={10} className={product.featured ? "text-gold" : "text-stone-400"} />
-                    <span>{product.featured ? "Featured" : "Feature"}</span>
-                  </button>
-                  <div className="flex gap-2">
-                    <button onClick={() => openModal(product)} className="text-brand hover:text-accent"><FaEdit /></button>
-                    <button onClick={() => handleDelete(product._id)} className="text-red-500"><FaTrash /></button>
+        <div ref={productsContainerRef} className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {paginatedProducts.map((product) => (
+              <div key={product._id} className="bg-white rounded-lg border border-stone-200 overflow-hidden">
+                <SafeImage src={product.imageUrl} alt={product.name} width={400} height={225} className="w-full object-cover" />
+                <div className="p-4">
+                  <h3 className="font-serif font-semibold text-brand">{product.name}</h3>
+                  <p className="text-xs text-stone-500 mt-1">{product.category}</p>
+                  <div className="mt-3 flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={() => handleToggleFeatured(product)}
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer ${
+                        product.featured
+                          ? "bg-gold/20 text-gold-dark"
+                          : featuredCount >= 3
+                          ? "bg-stone-100 text-stone-400 opacity-60 cursor-not-allowed"
+                          : "bg-stone-100 text-stone-600 hover:bg-gold/10"
+                      }`}
+                    >
+                      <FaStar size={10} className={product.featured ? "text-gold" : "text-stone-400"} />
+                      <span>{product.featured ? "Featured" : "Feature"}</span>
+                    </button>
+                    <div className="flex gap-2">
+                      <button onClick={() => openModal(product)} className="text-brand hover:text-accent"><FaEdit /></button>
+                      <button onClick={() => handleDelete(product._id)} className="text-red-500"><FaTrash /></button>
+                    </div>
                   </div>
                 </div>
               </div>
+            ))}
+          </div>
+          {filteredProducts.length === 0 && (
+            <div className="bg-white rounded-lg border border-stone-200 p-12 text-center text-stone-400">
+              No products found.
             </div>
-          ))}
+          )}
+          {filteredProducts.length > 0 && (
+            <div className="admin-card !p-0 overflow-hidden">
+              {renderPagination()}
+            </div>
+          )}
         </div>
       )}
 
