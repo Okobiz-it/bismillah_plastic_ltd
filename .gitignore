@@ -48,3 +48,10 @@ logs/
 *.log
 *.tmp
 *.temp
+
+# SSH & SSL Keys
+*.pem
+*.key
+*.pub
+cpanel_deploy_key*
+id_rsa*

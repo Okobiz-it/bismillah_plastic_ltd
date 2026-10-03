@@ -80,40 +80,32 @@ jobs:
       # ----------------------------------------------------
       # 4. DEPLOY BACKEND TO cPanel
       # ----------------------------------------------------
-      - name: Rsync Backend to Server
+      - name: Deploy Backend to Server
         env:
           SSH_USER: ${{ secrets.SSH_USER || 'bismill6' }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_PORT: ${{ secrets.SSH_PORT || 22 }}
         run: |
-          echo "Deploying Backend to /home/$SSH_USER/backend/ ..."
+          echo "Packaging & Deploying Backend..."
+          tar -czf backend-bundle.tar.gz -C backend dist server.js package.json package-lock.json
           ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "mkdir -p /home/$SSH_USER/backend"
-          scp -P "$SSH_PORT" -r \
-            backend/dist \
-            backend/server.js \
-            backend/package.json \
-            backend/package-lock.json \
-            "$SSH_USER@$SSH_HOST:/home/$SSH_USER/backend/"
+          scp -P "$SSH_PORT" backend-bundle.tar.gz "$SSH_USER@$SSH_HOST:/home/$SSH_USER/backend/"
+          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "tar -xzf /home/$SSH_USER/backend/backend-bundle.tar.gz -C /home/$SSH_USER/backend && rm -f /home/$SSH_USER/backend/backend-bundle.tar.gz"
 
       # ----------------------------------------------------
       # 5. DEPLOY FRONTEND TO cPanel
       # ----------------------------------------------------
-      - name: Rsync Frontend to Server
+      - name: Deploy Frontend to Server
         env:
           SSH_USER: ${{ secrets.SSH_USER || 'bismill6' }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_PORT: ${{ secrets.SSH_PORT || 22 }}
         run: |
-          echo "Deploying Frontend to /home/$SSH_USER/frontend/ ..."
+          echo "Packaging & Deploying Frontend (excluding cache)..."
+          tar -czf frontend-bundle.tar.gz --exclude='.next/cache' -C frontend .next public server.js next.config.ts package.json package-lock.json
           ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "mkdir -p /home/$SSH_USER/frontend"
-          scp -P "$SSH_PORT" -r \
-            frontend/.next \
-            frontend/public \
-            frontend/server.js \
-            frontend/next.config.ts \
-            frontend/package.json \
-            frontend/package-lock.json \
-            "$SSH_USER@$SSH_HOST:/home/$SSH_USER/frontend/"
+          scp -P "$SSH_PORT" frontend-bundle.tar.gz "$SSH_USER@$SSH_HOST:/home/$SSH_USER/frontend/"
+          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "tar -xzf /home/$SSH_USER/frontend/frontend-bundle.tar.gz -C /home/$SSH_USER/frontend && rm -f /home/$SSH_USER/frontend/frontend-bundle.tar.gz"
 
       # ----------------------------------------------------
       # 6. SYNC PRODUCTION .ENV FILES FROM GITHUB SECRETS
