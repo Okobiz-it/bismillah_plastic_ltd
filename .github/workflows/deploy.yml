@@ -51,14 +51,10 @@ jobs:
           echo "Preparing Frontend .env..."
           cd frontend
           if [ -n "$FRONTEND_ENV" ]; then
-            echo "$FRONTEND_ENV" > .env
+            printf "%s\n" "$FRONTEND_ENV" > .env
           else
-            cat << EOF > .env
-NODE_ENV=production
-NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
-NEXT_PUBLIC_SITE_DOMAIN=$NEXT_PUBLIC_SITE_DOMAIN
-NEXT_PUBLIC_ADMIN_DOMAIN=$NEXT_PUBLIC_ADMIN_DOMAIN
-EOF
+            printf "NODE_ENV=production\nNEXT_PUBLIC_API_URL=%s\nNEXT_PUBLIC_SITE_DOMAIN=%s\nNEXT_PUBLIC_ADMIN_DOMAIN=%s\n" \
+              "$NEXT_PUBLIC_API_URL" "$NEXT_PUBLIC_SITE_DOMAIN" "$NEXT_PUBLIC_ADMIN_DOMAIN" > .env
           fi
           echo "Building Frontend..."
           npm ci
