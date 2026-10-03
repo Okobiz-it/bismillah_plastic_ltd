@@ -88,21 +88,12 @@ jobs:
         run: |
           echo "Deploying Backend to /home/$SSH_USER/backend/ ..."
           ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "mkdir -p /home/$SSH_USER/backend"
-          rsync -avz \
-            -e "ssh -p $SSH_PORT" \
-            --exclude '.git*' \
-            --exclude '.env*' \
-            --exclude '.htaccess*' \
-            --exclude '.well-known*' \
-            --exclude 'src' \
-            --exclude 'scripts' \
-            --exclude 'node_modules' \
-            --exclude 'tmp' \
+          scp -P "$SSH_PORT" -r \
             backend/dist \
             backend/server.js \
             backend/package.json \
             backend/package-lock.json \
-            $SSH_USER@$SSH_HOST:/home/$SSH_USER/backend/
+            "$SSH_USER@$SSH_HOST:/home/$SSH_USER/backend/"
 
       # ----------------------------------------------------
       # 5. DEPLOY FRONTEND TO cPanel
@@ -115,22 +106,14 @@ jobs:
         run: |
           echo "Deploying Frontend to /home/$SSH_USER/frontend/ ..."
           ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "mkdir -p /home/$SSH_USER/frontend"
-          rsync -avz \
-            -e "ssh -p $SSH_PORT" \
-            --exclude '.git*' \
-            --exclude '.env*' \
-            --exclude '.htaccess*' \
-            --exclude '.well-known*' \
-            --exclude 'src' \
-            --exclude 'node_modules' \
-            --exclude 'tmp' \
+          scp -P "$SSH_PORT" -r \
             frontend/.next \
             frontend/public \
             frontend/server.js \
             frontend/next.config.ts \
             frontend/package.json \
             frontend/package-lock.json \
-            $SSH_USER@$SSH_HOST:/home/$SSH_USER/frontend/
+            "$SSH_USER@$SSH_HOST:/home/$SSH_USER/frontend/"
 
       # ----------------------------------------------------
       # 6. SYNC PRODUCTION .ENV FILES FROM GITHUB SECRETS
