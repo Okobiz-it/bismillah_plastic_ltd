@@ -102,6 +102,7 @@ jobs:
           SSH_PORT: ${{ secrets.SSH_PORT || 22 }}
         run: |
           echo "Packaging & Deploying Frontend (excluding cache)..."
+          mkdir -p frontend/public
           tar -czf frontend-bundle.tar.gz --exclude='.next/cache' -C frontend .next public server.js next.config.ts package.json package-lock.json
           ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "mkdir -p /home/$SSH_USER/frontend"
           scp -P "$SSH_PORT" frontend-bundle.tar.gz "$SSH_USER@$SSH_HOST:/home/$SSH_USER/frontend/"
