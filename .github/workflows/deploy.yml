@@ -88,9 +88,9 @@ jobs:
         run: |
           echo "Packaging & Deploying Backend..."
           tar -czf backend-bundle.tar.gz -C backend dist server.js package.json package-lock.json
-          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "mkdir -p /home/$SSH_USER/backend"
-          scp -P "$SSH_PORT" backend-bundle.tar.gz "$SSH_USER@$SSH_HOST:/home/$SSH_USER/backend/"
-          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "tar -xzf /home/$SSH_USER/backend/backend-bundle.tar.gz -C /home/$SSH_USER/backend && rm -f /home/$SSH_USER/backend/backend-bundle.tar.gz"
+          ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "mkdir -p /home/$SSH_USER/backend"
+          scp -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -P "$SSH_PORT" backend-bundle.tar.gz "$SSH_USER@$SSH_HOST:/home/$SSH_USER/backend/"
+          ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "tar -xzf /home/$SSH_USER/backend/backend-bundle.tar.gz -C /home/$SSH_USER/backend && rm -f /home/$SSH_USER/backend/backend-bundle.tar.gz"
 
       # ----------------------------------------------------
       # 5. DEPLOY FRONTEND TO cPanel
@@ -104,9 +104,9 @@ jobs:
           echo "Packaging & Deploying Frontend (excluding cache)..."
           mkdir -p frontend/public
           tar -czf frontend-bundle.tar.gz --exclude='.next/cache' -C frontend .next public server.js next.config.ts package.json package-lock.json
-          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "mkdir -p /home/$SSH_USER/frontend"
-          scp -P "$SSH_PORT" frontend-bundle.tar.gz "$SSH_USER@$SSH_HOST:/home/$SSH_USER/frontend/"
-          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "tar -xzf /home/$SSH_USER/frontend/frontend-bundle.tar.gz -C /home/$SSH_USER/frontend && rm -f /home/$SSH_USER/frontend/frontend-bundle.tar.gz"
+          ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "mkdir -p /home/$SSH_USER/frontend"
+          scp -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -P "$SSH_PORT" frontend-bundle.tar.gz "$SSH_USER@$SSH_HOST:/home/$SSH_USER/frontend/"
+          ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "tar -xzf /home/$SSH_USER/frontend/frontend-bundle.tar.gz -C /home/$SSH_USER/frontend && rm -f /home/$SSH_USER/frontend/frontend-bundle.tar.gz"
 
       # ----------------------------------------------------
       # 6. SYNC PRODUCTION .ENV FILES FROM GITHUB SECRETS
@@ -121,18 +121,18 @@ jobs:
         run: |
           if [ -n "$BACKEND_ENV" ]; then
             echo "Syncing backend .env from BACKEND_ENV secret..."
-            printf "%s\n" "$BACKEND_ENV" | ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "cat > /home/$SSH_USER/backend/.env && chmod 600 /home/$SSH_USER/backend/.env"
+            printf "%s\n" "$BACKEND_ENV" | ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "cat > /home/$SSH_USER/backend/.env && chmod 600 /home/$SSH_USER/backend/.env"
           fi
 
           if [ -n "$FRONTEND_ENV" ]; then
             echo "Syncing frontend .env from FRONTEND_ENV secret..."
-            printf "%s\n" "$FRONTEND_ENV" | ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "cat > /home/$SSH_USER/frontend/.env && chmod 600 /home/$SSH_USER/frontend/.env"
+            printf "%s\n" "$FRONTEND_ENV" | ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "cat > /home/$SSH_USER/frontend/.env && chmod 600 /home/$SSH_USER/frontend/.env"
           else
             printf "NODE_ENV=production\nNEXT_PUBLIC_API_URL=%s\nNEXT_PUBLIC_SITE_DOMAIN=%s\nNEXT_PUBLIC_ADMIN_DOMAIN=%s\n" \
               "${{ secrets.NEXT_PUBLIC_API_URL || 'https://api.bismillahplastic.com/api' }}" \
               "${{ secrets.NEXT_PUBLIC_SITE_DOMAIN || 'bismillahplastic.com' }}" \
               "${{ secrets.NEXT_PUBLIC_ADMIN_DOMAIN || 'admin.bismillahplastic.com' }}" \
-              | ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "cat > /home/$SSH_USER/frontend/.env && chmod 600 /home/$SSH_USER/frontend/.env"
+              | ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "cat > /home/$SSH_USER/frontend/.env && chmod 600 /home/$SSH_USER/frontend/.env"
           fi
 
       # ----------------------------------------------------
@@ -144,32 +144,53 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_PORT: ${{ secrets.SSH_PORT || 22 }}
         run: |
-          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "bash -s" << 'EOF'
+          ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -o TCPKeepAlive=yes -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "bash -s" << 'EOF'
             set -e
 
             # Source user bash environment
             [ -f ~/.bashrc ] && source ~/.bashrc 2>/dev/null || true
 
+            # Clean up any lingering stalled npm install processes from previous aborted runs that exhaust cPanel process limits
+            pkill -u "$USER" -f "npm install" 2>/dev/null || true
+            pkill -u "$USER" -f "npm ci" 2>/dev/null || true
+
             # Ensure we use the latest Node.js available (avoid Node 8/10 syntax errors)
             export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:$HOME/bin
             
-            # Explicitly look for higher Node versions first
-            for v in 22 20 18 16; do
+            # Explicitly look for stable LTS Node versions first (prefer 20/22)
+            for v in 20 22 18 16; do
               if [ -d "/opt/alt/alt-nodejs$v/root/usr/bin" ]; then export PATH="/opt/alt/alt-nodejs$v/root/usr/bin:$PATH"; break; fi
               if [ -d "/opt/cpanel/ea-nodejs$v/bin" ]; then export PATH="/opt/cpanel/ea-nodejs$v/bin:$PATH"; break; fi
             done
             
             echo "Using Node version: $(node -v)"
 
+            # Limit memory usage for Node to avoid CloudLinux OOM kills
+            export NODE_OPTIONS="--max-old-space-size=512"
+
             echo "=== 1. Setting up Backend Dependencies & Restarting ==="
             cd "$HOME/backend"
-            npm install --omit=dev --no-audit --no-fund
+            # If node_modules exists, only run npm install if package.json has changed
+            if [ ! -d "node_modules" ] || [ package.json -nt node_modules ]; then
+              echo "Installing backend dependencies..."
+              npm install --omit=dev --no-audit --no-fund --maxsockets=2
+              touch node_modules
+            else
+              echo "Backend dependencies are already up-to-date. Skipping npm install."
+            fi
             mkdir -p tmp
             touch tmp/restart.txt
 
             echo "=== 2. Setting up Frontend Dependencies & Restarting ==="
             cd "$HOME/frontend"
-            npm install --omit=dev --no-audit --no-fund
+            # If node_modules exists, only run npm install if package.json has changed
+            if [ ! -d "node_modules" ] || [ package.json -nt node_modules ]; then
+              echo "Installing frontend dependencies..."
+              npm install --omit=dev --no-audit --no-fund --maxsockets=2
+              touch node_modules
+            else
+              echo "Frontend dependencies are already up-to-date. Skipping npm install."
+            fi
             mkdir -p tmp
             touch tmp/restart.txt
 
