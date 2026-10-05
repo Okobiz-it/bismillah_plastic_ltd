@@ -1,4 +1,4 @@
-﻿name: Deploy to cPanel via SSH
+name: Deploy to cPanel via SSH
 
 on:
   push:
@@ -105,23 +105,29 @@ jobs:
             ServerAliveCountMax 10
             TCPKeepAlive yes
             ConnectTimeout 30
-            BatchMode yes
           SSHCONF
           chmod 600 ~/.ssh/config
 
       # ----------------------------------------------------
-      # 5. UPLOAD ALL FILES IN ONE SCP BATCH
+      # 5. UPLOAD ALL FILES VIA SFTP BATCH (bypasses SCP subsystem issues)
       # ----------------------------------------------------
       - name: Upload Bundles to Server
         env:
           SSH_USER: ${{ secrets.SSH_USER || 'bismill6' }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT || 22 }}
         run: |
-          echo "Uploading backend bundle..."
-          scp -F ~/.ssh/config backend-bundle.tar.gz "$SSH_USER@deploy_target:/home/$SSH_USER/backend-bundle.tar.gz"
-
-          echo "Uploading frontend bundle..."
-          scp -F ~/.ssh/config frontend-bundle.tar.gz "$SSH_USER@deploy_target:/home/$SSH_USER/frontend-bundle.tar.gz"
-
+          echo "Uploading bundles via sftp batch..."
+          sftp -b - -i ~/.ssh/deploy_key \
+            -o StrictHostKeyChecking=no \
+            -o ServerAliveInterval=30 \
+            -o ConnectTimeout=30 \
+            -P "$SSH_PORT" \
+            "$SSH_USER@$SSH_HOST" << SFTP_CMDS
+          put backend-bundle.tar.gz /home/$SSH_USER/backend-bundle.tar.gz
+          put frontend-bundle.tar.gz /home/$SSH_USER/frontend-bundle.tar.gz
+          bye
+          SFTP_CMDS
           echo "All bundles uploaded successfully."
 
       # ----------------------------------------------------
@@ -130,6 +136,8 @@ jobs:
       - name: Prepare & Upload Deploy Script
         env:
           SSH_USER: ${{ secrets.SSH_USER || 'bismill6' }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT || 22 }}
           BACKEND_ENV: ${{ secrets.BACKEND_ENV }}
           FRONTEND_ENV: ${{ secrets.FRONTEND_ENV }}
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'https://api.bismillahplastic.com/api' }}
@@ -150,9 +158,16 @@ jobs:
               "$NEXT_PUBLIC_API_URL" "$NEXT_PUBLIC_SITE_DOMAIN" "$NEXT_PUBLIC_ADMIN_DOMAIN" > frontend.env
           fi
 
-          # Upload .env files
-          scp -F ~/.ssh/config backend.env "$SSH_USER@deploy_target:/home/$SSH_USER/backend.env.new"
-          scp -F ~/.ssh/config frontend.env "$SSH_USER@deploy_target:/home/$SSH_USER/frontend.env.new"
+          # Upload .env files and deploy script via sftp
+          sftp -b - -i ~/.ssh/deploy_key \
+            -o StrictHostKeyChecking=no \
+            -o ServerAliveInterval=30 \
+            -o ConnectTimeout=30 \
+            -P "$SSH_PORT" \
+            "$SSH_USER@$SSH_HOST" << SFTP_ENV
+          put backend.env /home/$SSH_USER/backend.env.new
+          put frontend.env /home/$SSH_USER/frontend.env.new
+          SFTP_ENV
 
           # Write the remote deploy script locally, then upload it
           cat > deploy_remote.sh << 'SCRIPT'
@@ -221,7 +236,14 @@ jobs:
           SCRIPT
 
           chmod +x deploy_remote.sh
-          scp -F ~/.ssh/config deploy_remote.sh "$SSH_USER@deploy_target:/home/$SSH_USER/deploy_remote.sh"
+          sftp -b - -i ~/.ssh/deploy_key \
+            -o StrictHostKeyChecking=no \
+            -o ServerAliveInterval=30 \
+            -o ConnectTimeout=30 \
+            -P "$SSH_PORT" \
+            "$SSH_USER@$SSH_HOST" << SFTP_SCRIPT
+          put deploy_remote.sh /home/$SSH_USER/deploy_remote.sh
+          SFTP_SCRIPT
           echo "Deploy script uploaded."
 
       # ----------------------------------------------------
@@ -230,7 +252,17 @@ jobs:
       - name: Run Deploy Script on Server
         env:
           SSH_USER: ${{ secrets.SSH_USER || 'bismill6' }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT || 22 }}
         run: |
           echo "Executing remote deploy script..."
-          ssh -F ~/.ssh/config "$SSH_USER@deploy_target" "bash /home/$SSH_USER/deploy_remote.sh && rm -f /home/$SSH_USER/deploy_remote.sh"
+          ssh -i ~/.ssh/deploy_key \
+            -o StrictHostKeyChecking=no \
+            -o ServerAliveInterval=30 \
+            -o ServerAliveCountMax=10 \
+            -o TCPKeepAlive=yes \
+            -o ConnectTimeout=30 \
+            -p "$SSH_PORT" \
+            "$SSH_USER@$SSH_HOST" \
+            "bash /home/$SSH_USER/deploy_remote.sh && rm -f /home/$SSH_USER/deploy_remote.sh"
           echo "Remote deployment complete."
