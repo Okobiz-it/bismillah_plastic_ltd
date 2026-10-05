@@ -68,7 +68,7 @@ export const defaultImpactData: ImpactData = {
     headline: "Transforming Regional Waste Into Sustainable Circular Impact",
     description:
       "Bismillah Plastic operates at the intersection of environmental conservation and social equity in northern Bangladesh — converting post-consumer plastic waste into industrial feedstock while empowering grassroots communities.",
-    imageUrl: "https://res.cloudinary.com/wpttnkjq/image/upload/v1787230422/www.beatsnoop.com-3000-YVZXGzd9UQ_bs8n0t.jpg",
+    imageUrl: "https://res.cloudinary.com/wpttnkjq/image/upload/f_auto,q_auto,w_1920/v1791200099/www.beatsnoop.com-3000-dg68Te34ty_vfohh2_oqucfb.jpg",
   },
   stats: [
     { value: "15,000 MT → 24,000 MT", label: "5-Year Processing Trajectory", sublabel: "Scaling capacity across Year 1 to Year 5" },
@@ -80,7 +80,7 @@ export const defaultImpactData: ImpactData = {
     title: "Environmental & Circular Economy Contribution",
     intro:
       "Our operations act as a direct and measurable intervention against regional waste management deficits in Dinajpur, preventing severe degradation of land and water ecosystems while enabling closed-loop material cycles.",
-    imageUrl: "https://res.cloudinary.com/wpttnkjq/image/upload/v1787633414/www.beatsnoop.com-3000-H7qxWhOneT_pru67a.jpg",
+    imageUrl: "https://res.cloudinary.com/wpttnkjq/image/upload/f_auto,q_auto,w_1000/v1791198797/DSC_0475_1_itkrl4.jpg",
     imageAlt: "Environmental and circular economy contribution",
     metricDiversionTitle: "Metric-Driven Diversion",
     metricDiversionDescription:
@@ -103,7 +103,7 @@ export const defaultImpactData: ImpactData = {
     title: "Social Inclusion & Livelihood Development",
     intro:
       "Circular economy success requires human dignity at its foundation. Bismillah Plastic integrates marginalized grassroots workers into a safe, formalized, and legally compliant value chain.",
-    imageUrl: "https://res.cloudinary.com/wpttnkjq/image/upload/v1787633415/www.beatsnoop.com-3000-MJzN4BhWpk_xq8vlp.jpg",
+    imageUrl: "https://res.cloudinary.com/wpttnkjq/image/upload/f_auto,q_auto,w_1000/v1791200667/DSC_0175_1_egfwtu.jpg",
     imageAlt: "Social inclusion and livelihood development",
     womensEmpowermentTitle: "Women’s Empowerment",
     womensEmpowermentDescription:

@@ -52,7 +52,7 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
       {/* Page Header (Hero) */}
       <section className="relative pt-24 sm:pt-28 md:pt-32 pb-16 sm:pb-20 md:pb-24 min-h-[350px] sm:min-h-[400px] md:min-h-[500px] flex items-center">
         <div className="absolute inset-0">
-          <Image src={IMAGES.HERO_ABOUT} alt="Company Overview" fill sizes="100vw" quality={85} className="object-cover" />
+          <Image src={IMAGES.HERO_ABOUT} alt="Company Overview" fill sizes="100vw" priority quality={80} className="object-cover" />
           <div className="absolute inset-0 bg-brand/80" />
         </div>
         <div className="container-wide relative z-10 text-center">
@@ -75,9 +75,9 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
             <FadeIn>
               <div>
                 <span className="eyebrow">Our Story</span>
-                <h3 className="font-serif text-brand mt-3 mb-4 sm:mb-6 leading-tight" style={{ fontSize: 'clamp(1.5rem, 1.5vw + 0.75rem, 2.25rem)' }}>
+                <h2 className="font-serif text-brand mt-3 mb-4 sm:mb-6 leading-tight" style={{ fontSize: 'clamp(1.5rem, 1.5vw + 0.75rem, 2.25rem)' }}>
                   Addressing Regional Waste Management Challenges
-                </h3>
+                </h2>
                 <div className="space-y-4 text-text-muted leading-relaxed">
                   <p>
                     {companyName} is a Bangladesh-based enterprise specializing in plastic waste
@@ -129,8 +129,10 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
                 <div className="relative aspect-[4/3] rounded-sm overflow-hidden shadow-lg">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src="https://res.cloudinary.com/wpttnkjq/image/upload/v1787638220/www.beatsnoop.com-3000-Sh0eLEpBiM_1_rfcu8w.jpg"
+                    src={IMAGES.ABOUT_FACILITIES}
                     alt="Bismillah Plastic processing facilities"
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-brand/20 via-transparent to-transparent" />
@@ -182,8 +184,10 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
                 <div className="relative aspect-[4/3] rounded-sm overflow-hidden shadow-lg">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src="https://res.cloudinary.com/wpttnkjq/image/upload/v1787638551/www.beatsnoop.com-3000-h8treCAnqK_1_vridez.jpg"
+                    src={IMAGES.ABOUT_SOCIAL_IMPACT}
                     alt="Social impact and worker welfare programs"
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-brand/20 via-transparent to-transparent" />
@@ -229,8 +233,10 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
                 <div className="relative aspect-[16/9] overflow-hidden">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src="https://res.cloudinary.com/wpttnkjq/image/upload/v1787633413/www.beatsnoop.com-3000-pKwyPINtJs_cbj7mz.jpg"
+                    src={IMAGES.ABOUT_SAFETY_TRAINING}
                     alt="Occupational training programs"
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                   />
                 </div>
@@ -249,8 +255,10 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
                 <div className="relative aspect-[16/9] overflow-hidden">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src="https://res.cloudinary.com/wpttnkjq/image/upload/v1787633413/www.beatsnoop.com-3000-4gUYrEiqjw_rfgf2z.jpg"
+                    src={IMAGES.ABOUT_SAFETY_ONSITE}
                     alt="On-site safety measures and PPE"
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                   />
                 </div>
@@ -269,8 +277,10 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
                 <div className="relative aspect-[16/9] overflow-hidden">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src="https://res.cloudinary.com/wpttnkjq/image/upload/v1787633413/www.beatsnoop.com-3000-BUzvwt7elj_jarowg.jpg"
+                    src={IMAGES.ABOUT_SAFETY_HEALTHCARE}
                     alt="Healthcare access and first-aid facilities"
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                   />
                 </div>
@@ -289,8 +299,10 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
                 <div className="relative aspect-[16/9] overflow-hidden">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src="https://res.cloudinary.com/wpttnkjq/image/upload/v1787633413/www.beatsnoop.com-3000-UWoBkt8Apl_ocb19g.jpg"
+                    src={IMAGES.ABOUT_SAFETY_COMPLIANCE}
                     alt="Labor compliance and ethical policies"
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                   />
                 </div>

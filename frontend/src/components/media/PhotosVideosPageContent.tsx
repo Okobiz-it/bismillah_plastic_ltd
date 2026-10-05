@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import CTABanner from "@/components/shared/CTABanner";
 import { IMAGES } from "@/constants/images";
+import { API_BASE } from "@/lib/api";
 import {
   PhotoItem,
   VideoItem,
@@ -65,7 +66,7 @@ function getVideoEmbedData(url: string): { type: "youtube" | "vimeo" | "direct";
   if (!url) return { type: "direct", src: "" };
 
   const ytMatch = url.match(
-    /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i
+    /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i
   );
   if (ytMatch && ytMatch[1]) {
     return {
@@ -124,6 +125,11 @@ export default function PhotosVideosPageContent({
   videos = defaultVideos,
   settings,
 }: Props) {
+  // Local reactive states synced with live DB updates
+  const [photoList, setPhotoList] = useState<PhotoItem[]>(photos && photos.length > 0 ? photos : defaultPhotos);
+  const [videoList, setVideoList] = useState<VideoItem[]>(videos && videos.length > 0 ? videos : defaultVideos);
+  const [failedImageUrls, setFailedImageUrls] = useState<Set<string>>(new Set());
+
   // Top view tab: "all" | "photos" | "videos"
   const [activeMediaTab, setActiveMediaTab] = useState<"all" | "photos" | "videos">("all");
 
@@ -136,6 +142,69 @@ export default function PhotosVideosPageContent({
   // Fullscreen & video container ref
   const videoModalRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Synchronize when server component props change
+  useEffect(() => {
+    if (photos && photos.length > 0) {
+      setPhotoList(photos);
+    }
+  }, [photos]);
+
+  useEffect(() => {
+    if (videos && videos.length > 0) {
+      setVideoList(videos);
+    }
+  }, [videos]);
+
+  // Live client-side synchronization: automatically re-fetches media when tab focuses or admin broadcasts an update
+  const syncLiveMedia = useCallback(async () => {
+    try {
+      const [pRes, vRes] = await Promise.allSettled([
+        fetch(`${API_BASE}/media/photos`, { cache: "no-store" }).then((r) => r.json()),
+        fetch(`${API_BASE}/media/videos`, { cache: "no-store" }).then((r) => r.json()),
+      ]);
+
+      if (pRes.status === "fulfilled" && Array.isArray(pRes.value?.data)) {
+        setPhotoList(pRes.value.data);
+      }
+      if (vRes.status === "fulfilled" && Array.isArray(vRes.value?.data)) {
+        setVideoList(vRes.value.data);
+      }
+    } catch {
+      // Quiet background network sync
+    }
+  }, []);
+
+  useEffect(() => {
+    syncLiveMedia();
+
+    const handleMediaUpdated = () => {
+      syncLiveMedia();
+    };
+
+    window.addEventListener("focus", handleMediaUpdated);
+    window.addEventListener("storage", handleMediaUpdated);
+    window.addEventListener("media_updated", handleMediaUpdated);
+
+    return () => {
+      window.removeEventListener("focus", handleMediaUpdated);
+      window.removeEventListener("storage", handleMediaUpdated);
+      window.removeEventListener("media_updated", handleMediaUpdated);
+    };
+  }, [syncLiveMedia]);
+
+  // Handler for broken/deleted image URLs to prevent broken image icons on client side
+  const handleImageError = (imageUrl: string) => {
+    setFailedImageUrls((prev) => {
+      const next = new Set(prev);
+      next.add(imageUrl);
+      return next;
+    });
+  };
+
+  // Only display valid, existing images
+  const activePhotos = photoList.filter((p) => !failedImageUrls.has(p.imageUrl));
+  const activeVideos = videoList;
 
   // Mobile touch swipe for photo lightbox
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
@@ -186,6 +255,17 @@ export default function PhotosVideosPageContent({
     };
   }, []);
 
+  // Lock body scroll when Lightbox or Video Modal is open
+  useEffect(() => {
+    if (activePhoto || activeVideo) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = prevOverflow;
+      };
+    }
+  }, [activePhoto, activeVideo]);
+
   const heading = settings?.heading || "Photos & Videos Showcase";
   const subheading =
     settings?.subheading ||
@@ -201,26 +281,32 @@ export default function PhotosVideosPageContent({
   };
 
   const handlePrevPhoto = useCallback(() => {
-    if (!activePhoto) return;
-    const currIdx = photos.findIndex(
+    if (!activePhoto || !activePhotos || activePhotos.length === 0) return;
+    const currIdx = activePhotos.findIndex(
       (p) => (p._id && p._id === activePhoto._id) || p.imageUrl === activePhoto.imageUrl
     );
-    const nextIdx = currIdx > 0 ? currIdx - 1 : photos.length - 1;
-    setActivePhoto(photos[nextIdx]);
-  }, [activePhoto, photos]);
+    if (currIdx === -1) return;
+    const nextIdx = currIdx > 0 ? currIdx - 1 : activePhotos.length - 1;
+    if (activePhotos[nextIdx]) setActivePhoto(activePhotos[nextIdx]);
+  }, [activePhoto, activePhotos]);
 
   const handleNextPhoto = useCallback(() => {
-    if (!activePhoto) return;
-    const currIdx = photos.findIndex(
+    if (!activePhoto || !activePhotos || activePhotos.length === 0) return;
+    const currIdx = activePhotos.findIndex(
       (p) => (p._id && p._id === activePhoto._id) || p.imageUrl === activePhoto.imageUrl
     );
-    const nextIdx = currIdx < photos.length - 1 ? currIdx + 1 : 0;
-    setActivePhoto(photos[nextIdx]);
-  }, [activePhoto, photos]);
+    if (currIdx === -1) return;
+    const nextIdx = currIdx < activePhotos.length - 1 ? currIdx + 1 : 0;
+    if (activePhotos[nextIdx]) setActivePhoto(activePhotos[nextIdx]);
+  }, [activePhoto, activePhotos]);
 
   // Keyboard navigation for Lightbox and Video modal
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't intercept if typing in an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
       if (activePhoto !== null) {
         if (e.key === "ArrowLeft") handlePrevPhoto();
         if (e.key === "ArrowRight") handleNextPhoto();
@@ -244,8 +330,8 @@ export default function PhotosVideosPageContent({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [activePhoto, activeVideo, handlePrevPhoto, handleNextPhoto]);
 
-  const activePhotoIndex = activePhoto
-    ? photos.findIndex(
+  const activePhotoIndex = activePhoto && activePhotos
+    ? activePhotos.findIndex(
         (p) => (p._id && p._id === activePhoto._id) || p.imageUrl === activePhoto.imageUrl
       )
     : -1;
@@ -295,7 +381,7 @@ export default function PhotosVideosPageContent({
                     : "text-white/85 hover:text-white hover:bg-white/10"
                 }`}
               >
-                <span>All <span className="hidden sm:inline">Showcase</span> ({photos.length + videos.length})</span>
+                <span>All <span className="hidden sm:inline">Showcase</span> ({activePhotos.length + activeVideos.length})</span>
               </button>
               <button
                 onClick={() => setActiveMediaTab("photos")}
@@ -306,7 +392,7 @@ export default function PhotosVideosPageContent({
                 }`}
               >
                 <FaImages className="text-xs shrink-0" />
-                <span>Photos <span className="hidden sm:inline">Pillars</span> ({photos.length})</span>
+                <span>Photos <span className="hidden sm:inline">Pillars</span> ({activePhotos.length})</span>
               </button>
               <button
                 onClick={() => setActiveMediaTab("videos")}
@@ -317,7 +403,7 @@ export default function PhotosVideosPageContent({
                 }`}
               >
                 <FaVideo className="text-xs shrink-0" />
-                <span>Videos <span className="hidden sm:inline">Tours</span> ({videos.length})</span>
+                <span>Videos <span className="hidden sm:inline">Tours</span> ({activeVideos.length})</span>
               </button>
             </div>
           </div>
@@ -328,7 +414,7 @@ export default function PhotosVideosPageContent({
       {(activeMediaTab === "all" || activeMediaTab === "photos") && (
         <div className="divide-y divide-stone-200/80">
           {PCATS.map((cat, catIdx) => {
-            const catPhotos = photos.filter((p) => p.category === cat.key);
+            const catPhotos = activePhotos.filter((p) => p.category === cat.key);
             const Icon = CATEGORY_ICON_MAP[cat.key] || FaImages;
             const isAltBg = catIdx % 2 === 1;
 
@@ -371,12 +457,12 @@ export default function PhotosVideosPageContent({
 
                   {/* Photos Grid */}
                   {catPhotos.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[14px] sm:gap-[16px] md:gap-[20px]">
                       {catPhotos.map((photo, photoIdx) => (
                         <FadeIn key={photo._id || photoIdx} delay={photoIdx * 0.06}>
                           <div
                             onClick={() => handleOpenLightbox(photo)}
-                            className="group relative aspect-[4/3] rounded-lg sm:rounded-xl overflow-hidden bg-stone-200 border border-stone-200/80 shadow-xs hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-end"
+                            className="group relative aspect-[4/3] rounded-[4px] overflow-hidden bg-stone-200 border border-stone-200/80 shadow-xs hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-end"
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
@@ -384,6 +470,7 @@ export default function PhotosVideosPageContent({
                               alt={photo.caption || cat.label}
                               className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                               loading="lazy"
+                              onError={() => handleImageError(photo.imageUrl)}
                             />
 
                             {/* Expand Badge Top Right */}
@@ -425,7 +512,7 @@ export default function PhotosVideosPageContent({
       {(activeMediaTab === "all" || activeMediaTab === "videos") && (
         <div className="divide-y divide-stone-200/80 border-t border-stone-200">
           {VCATS.map((cat, catIdx) => {
-            const catVideos = videos.filter((v) => v.category === cat.key);
+            const catVideos = activeVideos.filter((v) => v.category === cat.key);
             const isAltBg = catIdx % 2 === 1;
 
             return (
@@ -554,10 +641,10 @@ export default function PhotosVideosPageContent({
             <div className="absolute top-2 xs:top-3 sm:top-5 left-2 xs:left-3 sm:left-6 right-2 xs:right-3 sm:right-6 z-50 flex items-center justify-between pointer-events-none">
               <div className="flex items-center gap-2 pointer-events-auto">
                 <span className="bg-brand text-white text-[10px] sm:text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded shadow-md">
-                  {PCATS.find((c) => c.key === activePhoto.category)?.label || "Operations"}
+                  {PCATS.find((c) => c.key === activePhoto?.category)?.label || "Operations"}
                 </span>
                 <span className="text-white/80 bg-black/50 px-2.5 py-1 rounded text-xs font-mono">
-                  {activePhotoIndex >= 0 ? `${activePhotoIndex + 1} / ${photos.length}` : ""}
+                  {activePhotoIndex >= 0 ? `${activePhotoIndex + 1} / ${activePhotos.length}` : ""}
                 </span>
               </div>
 
@@ -602,17 +689,17 @@ export default function PhotosVideosPageContent({
               onClick={(e) => e.stopPropagation()}
               className="relative max-w-5xl w-full max-h-[85vh] sm:max-h-[88vh] flex flex-col items-center justify-center px-10 sm:px-14"
             >
-              <div className="relative w-full max-h-[66vh] sm:max-h-[74vh] flex items-center justify-center overflow-hidden rounded-lg shadow-2xl bg-black/60">
+              <div className="relative w-full max-h-[66vh] sm:max-h-[74vh] flex items-center justify-center overflow-hidden rounded-[4px] shadow-2xl bg-black/60">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={activePhoto.imageUrl}
-                  alt={activePhoto.caption || "Photo"}
-                  className="max-h-[66vh] sm:max-h-[74vh] w-auto max-w-full object-contain rounded-lg"
+                  src={activePhoto?.imageUrl || ""}
+                  alt={activePhoto?.caption || "Photo"}
+                  className="max-h-[66vh] sm:max-h-[74vh] w-auto max-w-full object-contain rounded-[4px]"
                 />
               </div>
 
-              {activePhoto.caption && (
-                <div className="mt-2.5 sm:mt-3.5 text-center max-w-2xl px-3 py-1.5 bg-black/50 backdrop-blur-xs rounded-md">
+              {activePhoto?.caption && (
+                <div className="mt-2.5 sm:mt-3.5 text-center max-w-2xl px-3 py-1.5 bg-black/50 backdrop-blur-xs rounded-[4px]">
                   <p className="text-white text-xs sm:text-sm md:text-base font-medium leading-snug sm:leading-relaxed">
                     {activePhoto.caption}
                   </p>

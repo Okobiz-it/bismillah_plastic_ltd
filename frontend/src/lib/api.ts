@@ -25,6 +25,7 @@ export const fetchApi = async (endpoint: string, options: RequestInit = {}) => {
   }
 
   const res = await fetch(`${API_BASE}${endpoint}`, {
+    cache: 'no-store',
     ...options,
     headers,
   });
@@ -35,8 +36,10 @@ export const fetchApi = async (endpoint: string, options: RequestInit = {}) => {
     if (res.status === 401 && typeof window !== 'undefined') {
       localStorage.removeItem('admin_token');
       localStorage.removeItem('adminToken');
-      if (window.location.pathname.startsWith('/admin') && window.location.pathname !== '/admin/login') {
-        window.location.href = '/admin/login';
+      const isAdminArea = window.location.pathname.startsWith('/admin') || window.location.hostname.startsWith('admin.');
+      const isLoginPage = window.location.pathname === '/admin/login' || window.location.pathname === '/login';
+      if (isAdminArea && !isLoginPage) {
+        window.location.href = window.location.hostname.startsWith('admin.') ? '/login' : '/admin/login';
       }
     }
     throw new Error(data.message || 'Something went wrong');

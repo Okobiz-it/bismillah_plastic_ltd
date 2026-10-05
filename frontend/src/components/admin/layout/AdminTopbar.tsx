@@ -54,7 +54,7 @@ export default function AdminTopbar({ onMenuClick }: AdminTopbarProps) {
       {/* Right: View Site button */}
       <div className="flex items-center gap-2 shrink-0">
         <a
-          href="/"
+          href={process.env.NEXT_PUBLIC_SITE_DOMAIN ? `https://${process.env.NEXT_PUBLIC_SITE_DOMAIN}` : "/"}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] sm:text-[13px] font-medium text-brand hover:text-gold bg-stone/5 hover:bg-stone/10 rounded-md transition-colors border border-stone/10"

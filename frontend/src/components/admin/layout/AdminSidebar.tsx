@@ -51,6 +51,58 @@ const navItems: NavItem[] = [
   { label: "Quote Requests", href: "/admin/inquiries", icon: FaEnvelope },
 ];
 
+// Helper to normalize path by stripping /admin prefix and trailing slashes for robust matching
+function normalizePath(p: string): string {
+  if (!p) return "/";
+  let clean = p.replace(/\/+$/, "");
+  clean = clean.replace(/^\/admin(?=\/|$)/, "");
+  if (!clean || clean === "") return "/";
+  return clean;
+}
+
+// Determines if targetHref is active based on current pathname
+function isPathActive(currentPathname: string, targetHref?: string): boolean {
+  if (!targetHref) return false;
+  const current = normalizePath(currentPathname);
+  const target = normalizePath(targetHref);
+
+  // Exact match
+  if (current === target) return true;
+
+  // Root match
+  if (target === "/") return current === "/";
+
+  // Prefix match for nested sub-routes
+  if (current.startsWith(target + "/")) return true;
+
+  // Known route aliases
+  if (
+    (target === "/about/gallery" && current === "/about/photos-videos") ||
+    (target === "/about/photos-videos" && current === "/about/gallery")
+  ) {
+    return true;
+  }
+
+  if (
+    (target === "/export" && current === "/impact") ||
+    (target === "/impact" && current === "/export")
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+// Generates the proper href depending on whether accessing via admin subdomain or path prefix
+function resolveHref(targetHref: string, currentPathname: string): string {
+  // If currentPathname does NOT start with /admin (e.g. running on admin.bismillahplastic.com),
+  // strip /admin prefix to avoid unnecessary 307 proxy redirect.
+  if (!currentPathname.startsWith("/admin")) {
+    return targetHref.replace(/^\/admin/, "") || "/";
+  }
+  return targetHref;
+}
+
 type NavGroupProps = {
   item: NavItem;
   pathname: string;
@@ -59,8 +111,15 @@ type NavGroupProps = {
 };
 
 function NavGroup({ item, pathname, isCollapsed, onLinkClick }: NavGroupProps) {
-  const isParentActive = item.subItems?.some(sub => pathname === sub.href || pathname.startsWith(sub.href + "/"));
+  const isParentActive = item.subItems?.some(sub => isPathActive(pathname, sub.href));
   const [isOpen, setIsOpen] = useState(isParentActive);
+
+  // Automatically keep open when an inner child is active
+  useEffect(() => {
+    if (isParentActive) {
+      setIsOpen(true);
+    }
+  }, [isParentActive]);
 
   if (isCollapsed) {
     return (
@@ -68,35 +127,36 @@ function NavGroup({ item, pathname, isCollapsed, onLinkClick }: NavGroupProps) {
         <button
           type="button"
           className={`w-[40px] h-[40px] flex items-center justify-center rounded-md transition-all duration-200 cursor-pointer ${isParentActive
-            ? "bg-white/15 text-gold shadow-sm ring-1 ring-white/10"
+            ? "bg-white/15 text-amber-400 shadow-sm ring-1 ring-amber-400/40 border-l-2 border-amber-400"
             : "hover:bg-white/10 text-white/70 hover:text-white"
             }`}
           aria-label={item.label}
         >
-          <item.icon className={`w-3.5 h-3.5 shrink-0 ${isParentActive ? "text-gold" : "text-white/60 group-hover:text-white"}`} />
+          <item.icon className={`w-3.5 h-3.5 shrink-0 ${isParentActive ? "text-amber-400" : "text-white/60 group-hover:text-white"}`} />
         </button>
 
         {/* Collapsed Hover Flyout Menu */}
         {item.subItems && (
           <div className="absolute left-[calc(100%+10px)] top-0 invisible opacity-0 group-hover:visible group-hover:opacity-100 bg-[#0B2942] w-52 shadow-2xl rounded-md py-2 z-[70] transition-all duration-200 border border-white/15 -translate-x-2 group-hover:translate-x-0 pointer-events-none group-hover:pointer-events-auto">
-            <div className="px-4 py-1.5 text-[11px] uppercase font-semibold tracking-wider text-gold border-b border-white/10 mb-1 flex items-center gap-2">
-              <item.icon className="w-3 h-3 text-gold shrink-0" />
+            <div className="px-4 py-1.5 text-[11px] uppercase font-semibold tracking-wider text-amber-400 border-b border-white/10 mb-1 flex items-center gap-2">
+              <item.icon className="w-3 h-3 text-amber-400 shrink-0" />
               <span>{item.label}</span>
             </div>
             <div className="py-1">
               {item.subItems.map(sub => {
-                const isActive = pathname === sub.href;
+                const isActive = isPathActive(pathname, sub.href);
                 return (
                   <Link
                     key={sub.href}
-                    href={sub.href}
+                    href={resolveHref(sub.href, pathname)}
                     onClick={onLinkClick}
-                    className={`block px-4 py-2 text-[12px] transition-colors cursor-pointer min-h-[36px] flex items-center ${isActive
-                      ? "bg-white/15 text-gold font-medium"
+                    className={`px-4 py-2 text-[12px] transition-all cursor-pointer min-h-[36px] flex items-center gap-2.5 ${isActive
+                      ? "bg-amber-400/15 text-amber-300 font-semibold shadow-xs border-l-2 border-amber-400"
                       : "text-white/80 hover:text-white hover:bg-white/5"
                       }`}
                   >
-                    {sub.label}
+                    <span className={`w-[5px] h-[5px] rounded-full shrink-0 transition-all ${isActive ? "bg-amber-400" : "bg-white/35"}`} />
+                    <span className="leading-tight">{sub.label}</span>
                   </Link>
                 );
               })}
@@ -112,11 +172,11 @@ function NavGroup({ item, pathname, isCollapsed, onLinkClick }: NavGroupProps) {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full flex items-center justify-between px-3 py-2.5 rounded-md transition-colors cursor-pointer ${isParentActive ? "bg-white/10 text-white" : "hover:bg-white/5 text-white/80 hover:text-white"
+        className={`w-full flex items-center justify-between px-3 py-2.5 rounded-md transition-colors cursor-pointer ${isParentActive ? "bg-white/10 text-white font-medium" : "hover:bg-white/5 text-white/80 hover:text-white"
           }`}
       >
         <div className="flex items-center gap-3">
-          <item.icon className={`w-3.5 h-3.5 shrink-0 ${isParentActive ? "text-gold" : "text-white/60"}`} />
+          <item.icon className={`w-3.5 h-3.5 shrink-0 ${isParentActive ? "text-amber-400" : "text-white/60"}`} />
           <span className="text-[13px] font-medium tracking-wide">{item.label}</span>
         </div>
         {isOpen ? (
@@ -130,18 +190,18 @@ function NavGroup({ item, pathname, isCollapsed, onLinkClick }: NavGroupProps) {
       {isOpen && (
         <div className="ml-4 pl-2.5 border-l border-white/15 mt-1 space-y-1">
           {item.subItems?.map(sub => {
-            const isActive = pathname === sub.href;
+            const isActive = isPathActive(pathname, sub.href);
             return (
               <Link
                 key={sub.href}
-                href={sub.href}
+                href={resolveHref(sub.href, pathname)}
                 onClick={onLinkClick}
-                className={`flex items-center gap-2 px-2.5 py-2 text-[12px] rounded-md transition-colors cursor-pointer min-h-[36px] ${isActive
-                  ? "bg-white/10 text-gold font-medium"
+                className={`flex items-center gap-2.5 px-3 py-2 text-[12px] rounded-md transition-all cursor-pointer min-h-[36px] ${isActive
+                  ? "bg-amber-400/15 text-amber-300 font-semibold shadow-xs border-l-2 border-amber-400"
                   : "text-white/70 hover:text-white hover:bg-white/5"
                   }`}
               >
-                <span className={`w-1.5 h-1.5 rounded-full shrink-0 transition-colors ${isActive ? "bg-gold" : "bg-white/30"}`} />
+                <span className={`w-[5px] h-[5px] rounded-full shrink-0 transition-all ${isActive ? "bg-amber-400" : "bg-white/35"}`} />
                 <span className="leading-tight">{sub.label}</span>
               </Link>
             );
@@ -251,18 +311,18 @@ export default function AdminSidebar({
                     />
                   );
                 }
-                const isActive = item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href!);
+                const isActive = isPathActive(pathname, item.href);
                 return (
                   <Link
                     key={item.href}
-                    href={item.href!}
+                    href={resolveHref(item.href!, pathname)}
                     onClick={onMobileClose}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors cursor-pointer mb-1 min-h-[44px] ${isActive
-                      ? "bg-white/10 text-gold font-medium"
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-all cursor-pointer mb-1 min-h-[44px] ${isActive
+                      ? "bg-amber-400/15 text-amber-300 font-semibold shadow-xs border-l-4 border-amber-400"
                       : "hover:bg-white/5 hover:text-white text-white/80"
                       }`}
                   >
-                    <item.icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? "text-gold" : "text-white/60"}`} />
+                    <item.icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? "text-amber-400" : "text-white/60"}`} />
                     <span className="text-[13px] font-medium tracking-wide">{item.label}</span>
                   </Link>
                 );
@@ -277,7 +337,8 @@ export default function AdminSidebar({
               onClick={() => {
                 localStorage.removeItem("admin_token");
                 localStorage.removeItem("adminToken");
-                window.location.href = "/admin/login";
+                const loginPath = window.location.hostname.startsWith("admin.") ? "/login" : "/admin/login";
+                window.location.href = loginPath;
               }}
               className="w-full py-2.5 bg-white/5 hover:bg-red-500/20 hover:text-red-400 text-[13px] rounded-md transition-colors cursor-pointer flex items-center px-3 gap-3 font-medium min-h-[44px]"
             >
@@ -349,20 +410,20 @@ export default function AdminSidebar({
               );
             }
 
-            const isActive = item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href!);
+            const isActive = isPathActive(pathname, item.href);
 
             if (isCollapsed) {
               return (
                 <div key={item.href} className="relative group flex justify-center w-full my-0.5">
                   <Link
-                    href={item.href!}
+                    href={resolveHref(item.href!, pathname)}
                     className={`w-[40px] h-[40px] flex items-center justify-center rounded-md transition-all duration-200 cursor-pointer ${isActive
-                      ? "bg-white/15 text-gold shadow-sm ring-1 ring-white/10"
+                      ? "bg-amber-400/20 text-amber-300 shadow-sm ring-1 ring-amber-400/40 border-l-2 border-amber-400"
                       : "hover:bg-white/10 text-white/70 hover:text-white"
                       }`}
                     aria-label={item.label}
                   >
-                    <item.icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? "text-gold" : "text-white/60 group-hover:text-white"}`} />
+                    <item.icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? "text-amber-400" : "text-white/60 group-hover:text-white"}`} />
                   </Link>
 
                   {/* Collapsed Tooltip */}
@@ -376,13 +437,13 @@ export default function AdminSidebar({
             return (
               <Link
                 key={item.href}
-                href={item.href!}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors cursor-pointer mb-1 ${isActive
-                  ? "bg-white/10 text-gold font-medium"
+                href={resolveHref(item.href!, pathname)}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-all cursor-pointer mb-1 ${isActive
+                  ? "bg-amber-400/15 text-amber-300 font-semibold shadow-xs border-l-4 border-amber-400"
                   : "hover:bg-white/5 hover:text-white text-white/80"
                   }`}
               >
-                <item.icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? "text-gold" : "text-white/60"}`} />
+                <item.icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? "text-amber-400" : "text-white/60"}`} />
                 <span className="text-[13px] font-medium tracking-wide">{item.label}</span>
               </Link>
             );
@@ -404,7 +465,8 @@ export default function AdminSidebar({
               onClick={() => {
                 localStorage.removeItem("admin_token");
                 localStorage.removeItem("adminToken");
-                window.location.href = "/admin/login";
+                const loginPath = window.location.hostname.startsWith("admin.") ? "/login" : "/admin/login";
+                window.location.href = loginPath;
               }}
               className="w-[40px] h-[40px] flex items-center justify-center rounded-md bg-white/5 hover:bg-red-500/20 text-white/60 hover:text-red-400 transition-colors cursor-pointer"
               aria-label="Logout"
@@ -420,7 +482,8 @@ export default function AdminSidebar({
             onClick={() => {
               localStorage.removeItem("admin_token");
               localStorage.removeItem("adminToken");
-              window.location.href = "/admin/login";
+              const loginPath = window.location.hostname.startsWith("admin.") ? "/login" : "/admin/login";
+              window.location.href = loginPath;
             }}
             className="w-full py-2.5 bg-white/5 hover:bg-red-500/20 hover:text-red-400 text-[13px] rounded-md transition-colors cursor-pointer flex items-center px-3 gap-3 font-medium min-h-[44px]"
           >

@@ -163,11 +163,17 @@ export default function GalleryAdminContent() {
 
   useEffect(() => {
     loadAllData();
+    return () => {
+      // Clean up any remaining preview URLs on unmount
+      photoPreviews.forEach((url) => URL.revokeObjectURL(url));
+    };
   }, []);
 
   // ─── PHOTO HANDLERS ────────────────────────────────────────────────────────
   const handlePhotoFilesSelect = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
+    // Revoke previous object URLs to prevent memory leaks
+    photoPreviews.forEach((url) => URL.revokeObjectURL(url));
     const files = Array.from(e.target.files);
     setSelectedPhotoFiles(files);
     const urls = files.map((f) => URL.createObjectURL(f));
@@ -188,6 +194,8 @@ export default function GalleryAdminContent() {
 
       await uploadFile("/media/photos", formData);
       toast.success(`${selectedPhotoFiles.length} photo(s) uploaded successfully!`);
+      // Revoke preview URLs after upload
+      photoPreviews.forEach((url) => URL.revokeObjectURL(url));
       setSelectedPhotoFiles([]);
       setPhotoPreviews([]);
       setUploadCaption("");
@@ -230,11 +238,15 @@ export default function GalleryAdminContent() {
   };
 
   const handleDeletePhoto = async (id?: string) => {
-    if (!id || !confirm("Are you sure you want to delete this photo?")) return;
+    if (!id || !confirm("Are you sure you want to permanently delete this photo?")) return;
     try {
       await fetchApi(`/media/photos/${id}`, { method: "DELETE" });
-      toast.success("Photo deleted");
+      toast.success("Photo permanently deleted");
       setPhotos((prev) => prev.filter((p) => p._id !== id));
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("media_updated"));
+        localStorage.setItem("media_last_updated", Date.now().toString());
+      }
     } catch (error: any) {
       toast.error(error.message || "Failed to delete photo");
     }
@@ -380,10 +392,10 @@ export default function GalleryAdminContent() {
   };
 
   const handleDeleteVideo = async (id?: string) => {
-    if (!id || !confirm("Are you sure you want to delete this video?")) return;
+    if (!id || !confirm("Are you sure you want to permanently delete this video? This will also remove its assets from Cloudinary.")) return;
     try {
       await fetchApi(`/media/videos/${id}`, { method: "DELETE" });
-      toast.success("Video deleted");
+      toast.success("Video permanently deleted");
       setVideos((prev) => prev.filter((v) => v._id !== id));
     } catch (error: any) {
       toast.error(error.message || "Failed to delete video");

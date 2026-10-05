@@ -1,9 +1,62 @@
 import type { Request, Response, NextFunction } from 'express';
 import { PhotoItem, VideoItem, PhotoCategoryType, VideoCategoryType } from './media.model.js';
+import { Settings } from '../settings/settings.model.js';
 import { sendResponse, sendError } from '../../core/utils/response.js';
 import cloudinary from '../../core/config/cloudinary.js';
 import sharp from 'sharp';
 import fs from 'fs';
+
+export const getCloudinaryAssetInfo = (url?: string): { publicId: string; resourceType: 'image' | 'video' | 'raw' } | null => {
+  if (!url || typeof url !== 'string' || !url.includes('cloudinary.com')) return null;
+  try {
+    const isVideo = url.includes('/video/upload/');
+    const isImage = url.includes('/image/upload/');
+    const resourceType: 'image' | 'video' | 'raw' = isVideo ? 'video' : 'image';
+    const uploadIndex = url.indexOf('/upload/');
+    if (uploadIndex === -1) return null;
+
+    let pathAfterUpload = url.substring(uploadIndex + '/upload/'.length).split('?')[0].split('#')[0];
+    const segments = pathAfterUpload.split('/');
+    const versionIndex = segments.findIndex(seg => /^v\d+$/.test(seg));
+    let publicIdWithExt: string;
+    if (versionIndex !== -1) {
+      publicIdWithExt = segments.slice(versionIndex + 1).join('/');
+    } else {
+      const nonTransformIndex = segments.findIndex(seg => !seg.includes(',') && !/^[a-z]_/.test(seg));
+      publicIdWithExt = nonTransformIndex !== -1 ? segments.slice(nonTransformIndex).join('/') : segments.join('/');
+    }
+    const lastDotIndex = publicIdWithExt.lastIndexOf('.');
+    const publicId = lastDotIndex !== -1 ? publicIdWithExt.substring(0, lastDotIndex) : publicIdWithExt;
+    return { publicId, resourceType };
+  } catch (err) {
+    console.error('Error parsing Cloudinary URL:', err);
+    return null;
+  }
+};
+
+export const deleteAssetFromCloudinary = async (
+  url?: string,
+  preferredResourceType?: 'image' | 'video' | 'raw'
+): Promise<boolean> => {
+  if (!url) return false;
+  const assetInfo = getCloudinaryAssetInfo(url);
+  if (!assetInfo || !assetInfo.publicId) {
+    return false;
+  }
+
+  const resourceType = preferredResourceType || assetInfo.resourceType || 'image';
+  try {
+    const result = await cloudinary.uploader.destroy(assetInfo.publicId, {
+      resource_type: resourceType,
+      invalidate: true,
+    });
+    console.log(`Cloudinary destroy for ${assetInfo.publicId} (${resourceType}):`, result);
+    return result.result === 'ok' || result.result === 'not found';
+  } catch (err) {
+    console.warn(`Failed to destroy Cloudinary asset ${assetInfo.publicId}:`, err);
+    return false;
+  }
+};
 
 const uploadToCloudinary = (buffer: Buffer, folder: string): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -198,9 +251,17 @@ const INITIAL_VIDEOS = [
 export const getPhotos = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { category } = req.query;
-    let count = await PhotoItem.countDocuments({});
-    if (count === 0) {
-      await PhotoItem.insertMany(INITIAL_PHOTOS);
+    const seedMarker = await Settings.findOne({ key: 'media_photos_initialized' });
+    if (!seedMarker) {
+      const count = await PhotoItem.countDocuments({});
+      if (count === 0) {
+        await PhotoItem.insertMany(INITIAL_PHOTOS);
+      }
+      await Settings.findOneAndUpdate(
+        { key: 'media_photos_initialized' },
+        { key: 'media_photos_initialized', value: true },
+        { upsert: true, returnDocument: 'after' }
+      );
     }
 
     const filter = category ? { category: category as PhotoCategoryType } : {};
@@ -256,19 +317,23 @@ export const updatePhoto = async (req: Request, res: Response, next: NextFunctio
     const { id } = req.params;
     const { caption, category } = req.body;
 
+    const existing = await PhotoItem.findById(id);
+    if (!existing) {
+      return sendError(res, 404, 'Photo not found');
+    }
+
     const updateData: any = {};
     if (caption !== undefined) updateData.caption = caption;
     if (category) updateData.category = category;
 
     if (req.file) {
+      if (existing.imageUrl) {
+        await deleteAssetFromCloudinary(existing.imageUrl, 'image');
+      }
       updateData.imageUrl = await optimizeAndUploadImage(req.file.buffer);
     }
 
-    const item = await PhotoItem.findByIdAndUpdate(id, updateData, { new: true });
-    if (!item) {
-      return sendError(res, 404, 'Photo not found');
-    }
-
+    const item = await PhotoItem.findByIdAndUpdate(id, updateData, { returnDocument: 'after' });
     sendResponse(res, 200, item, 'Photo updated successfully');
   } catch (error) {
     next(error);
@@ -278,10 +343,17 @@ export const updatePhoto = async (req: Request, res: Response, next: NextFunctio
 export const deletePhoto = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const item = await PhotoItem.findByIdAndDelete(id);
+    const item = await PhotoItem.findById(id);
     if (!item) {
       return sendError(res, 404, 'Photo not found');
     }
+
+    // Permanently destroy image asset from Cloudinary
+    if (item.imageUrl) {
+      await deleteAssetFromCloudinary(item.imageUrl, 'image');
+    }
+
+    await PhotoItem.findByIdAndDelete(id);
     sendResponse(res, 200, null, 'Photo deleted successfully');
   } catch (error) {
     next(error);
@@ -291,14 +363,18 @@ export const deletePhoto = async (req: Request, res: Response, next: NextFunctio
 export const reorderPhotos = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { ids } = req.body;
-    if (!Array.isArray(ids)) {
-      return sendError(res, 400, 'ids must be an array of IDs');
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return sendError(res, 400, 'ids must be a non-empty array of IDs');
     }
 
-    const operations = ids.map((id, index) =>
-      PhotoItem.findByIdAndUpdate(id, { order: index }, { new: true })
-    );
-    const updated = await Promise.all(operations);
+    const bulkOps = ids.map((id, index) => ({
+      updateOne: {
+        filter: { _id: id },
+        update: { $set: { order: index } },
+      },
+    }));
+    await PhotoItem.bulkWrite(bulkOps);
+    const updated = await PhotoItem.find({}).sort({ order: 1 });
     sendResponse(res, 200, updated, 'Photos reordered successfully');
   } catch (error) {
     next(error);
@@ -312,9 +388,17 @@ export const reorderPhotos = async (req: Request, res: Response, next: NextFunct
 export const getVideos = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { category } = req.query;
-    let count = await VideoItem.countDocuments({});
-    if (count === 0) {
-      await VideoItem.insertMany(INITIAL_VIDEOS);
+    const seedMarker = await Settings.findOne({ key: 'media_videos_initialized' });
+    if (!seedMarker) {
+      const count = await VideoItem.countDocuments({});
+      if (count === 0) {
+        await VideoItem.insertMany(INITIAL_VIDEOS);
+      }
+      await Settings.findOneAndUpdate(
+        { key: 'media_videos_initialized' },
+        { key: 'media_videos_initialized', value: true },
+        { upsert: true, returnDocument: 'after' }
+      );
     }
 
     const filter = category ? { category: category as VideoCategoryType } : {};
@@ -340,7 +424,7 @@ export const createVideo = async (req: Request, res: Response, next: NextFunctio
 
     // If no thumbnail provided and it's a YouTube URL, extract standard YouTube thumb
     if (!thumbnailUrl && videoUrl) {
-      const ytMatch = videoUrl.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
+      const ytMatch = videoUrl.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
       if (ytMatch && ytMatch[1]) {
         thumbnailUrl = `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`;
       }
@@ -368,23 +452,32 @@ export const updateVideo = async (req: Request, res: Response, next: NextFunctio
     const { id } = req.params;
     const { title, description, category, videoUrl, duration } = req.body;
 
+    const existing = await VideoItem.findById(id);
+    if (!existing) {
+      return sendError(res, 404, 'Video not found');
+    }
+
     const updateData: any = {};
     if (title !== undefined) updateData.title = title;
     if (description !== undefined) updateData.description = description;
     if (category) updateData.category = category;
-    if (videoUrl !== undefined) updateData.videoUrl = videoUrl;
+    if (videoUrl !== undefined) {
+      if (existing.videoUrl && existing.videoUrl !== videoUrl) {
+        await deleteAssetFromCloudinary(existing.videoUrl, 'video');
+      }
+      updateData.videoUrl = videoUrl;
+    }
     if (duration !== undefined) updateData.duration = duration;
     if (req.body.thumbnailUrl !== undefined) updateData.thumbnailUrl = req.body.thumbnailUrl;
 
     if (req.file) {
+      if (existing.thumbnailUrl) {
+        await deleteAssetFromCloudinary(existing.thumbnailUrl, 'image');
+      }
       updateData.thumbnailUrl = await optimizeAndUploadImage(req.file.buffer, 'bismillah_plastic/video_thumbs');
     }
 
-    const video = await VideoItem.findByIdAndUpdate(id, updateData, { new: true });
-    if (!video) {
-      return sendError(res, 404, 'Video not found');
-    }
-
+    const video = await VideoItem.findByIdAndUpdate(id, updateData, { returnDocument: 'after' });
     sendResponse(res, 200, video, 'Video updated successfully');
   } catch (error) {
     next(error);
@@ -394,10 +487,22 @@ export const updateVideo = async (req: Request, res: Response, next: NextFunctio
 export const deleteVideo = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const video = await VideoItem.findByIdAndDelete(id);
+    const video = await VideoItem.findById(id);
     if (!video) {
       return sendError(res, 404, 'Video not found');
     }
+
+    // Delete video asset from Cloudinary if hosted on Cloudinary
+    if (video.videoUrl) {
+      await deleteAssetFromCloudinary(video.videoUrl, 'video');
+    }
+
+    // Delete thumbnail from Cloudinary if hosted on Cloudinary
+    if (video.thumbnailUrl) {
+      await deleteAssetFromCloudinary(video.thumbnailUrl, 'image');
+    }
+
+    await VideoItem.findByIdAndDelete(id);
     sendResponse(res, 200, null, 'Video deleted successfully');
   } catch (error) {
     next(error);
@@ -407,14 +512,18 @@ export const deleteVideo = async (req: Request, res: Response, next: NextFunctio
 export const reorderVideos = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { ids } = req.body;
-    if (!Array.isArray(ids)) {
-      return sendError(res, 400, 'ids must be an array of IDs');
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return sendError(res, 400, 'ids must be a non-empty array of IDs');
     }
 
-    const operations = ids.map((id, index) =>
-      VideoItem.findByIdAndUpdate(id, { order: index }, { new: true })
-    );
-    const updated = await Promise.all(operations);
+    const bulkOps = ids.map((id, index) => ({
+      updateOne: {
+        filter: { _id: id },
+        update: { $set: { order: index } },
+      },
+    }));
+    await VideoItem.bulkWrite(bulkOps);
+    const updated = await VideoItem.find({}).sort({ order: 1 });
     sendResponse(res, 200, updated, 'Videos reordered successfully');
   } catch (error) {
     next(error);

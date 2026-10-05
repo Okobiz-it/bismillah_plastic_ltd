@@ -4,6 +4,7 @@ import { defaultPhotos, defaultVideos } from "@/data/mediaData";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "Photos & Videos — Operational & Impact Showcase | Bismillah Plastic",
@@ -14,22 +15,22 @@ export const metadata: Metadata = {
 async function getPhotos() {
   try {
     const res = await fetch(`${API_BASE}/media/photos`, { cache: "no-store" });
-    if (!res.ok) return defaultPhotos;
+    if (!res.ok) return [];
     const data = await res.json();
-    return data.data && data.data.length > 0 ? data.data : defaultPhotos;
+    return Array.isArray(data.data) ? data.data : [];
   } catch {
-    return defaultPhotos;
+    return [];
   }
 }
 
 async function getVideos() {
   try {
     const res = await fetch(`${API_BASE}/media/videos`, { cache: "no-store" });
-    if (!res.ok) return defaultVideos;
+    if (!res.ok) return [];
     const data = await res.json();
-    return data.data && data.data.length > 0 ? data.data : defaultVideos;
+    return Array.isArray(data.data) ? data.data : [];
   } catch {
-    return defaultVideos;
+    return [];
   }
 }
 

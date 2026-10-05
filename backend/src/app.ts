@@ -51,6 +51,14 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Disable caching for all API endpoints so clients and proxies always get fresh data
+app.use('/api', (req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  next();
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/home', homeRoutes);
