@@ -78,6 +78,18 @@ jobs:
           ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts
 
       # ----------------------------------------------------
+      # 3.5. CLEANUP PREVIOUS STALLED PROCESSES
+      # ----------------------------------------------------
+      - name: Cleanup Stalled Processes
+        env:
+          SSH_USER: ${{ secrets.SSH_USER || 'bismill6' }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT || 22 }}
+        run: |
+          echo "Killing any lingering npm installation processes to free up cPanel resources..."
+          ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "pkill -u $SSH_USER -f 'npm' || true"
+
+      # ----------------------------------------------------
       # 4. DEPLOY BACKEND TO cPanel
       # ----------------------------------------------------
       - name: Deploy Backend to Server
