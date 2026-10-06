@@ -44,6 +44,13 @@ const navItems: NavItem[] = [
       { label: "Photos | Videos", href: "/admin/about/gallery" },
     ]
   },
+  {
+    label: "Banners",
+    icon: FaImages,
+    subItems: [
+      { label: "Home", href: "/admin/banners/home" }
+    ]
+  },
   { label: "Products", href: "/admin/products", icon: FaBoxOpen },
   { label: "Raw Materials", href: "/admin/raw-materials", icon: FaLeaf },
   { label: "Impact", href: "/admin/export", icon: FaGlobeAmericas },

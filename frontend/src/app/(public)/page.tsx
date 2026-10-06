@@ -58,13 +58,25 @@ async function getExportRegions() {
   }
 }
 
+async function getHomeBanners() {
+  try {
+    const res = await fetch(`${API_BASE}/home/banners`, { cache: 'no-store' });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.data || [];
+  } catch {
+    return [];
+  }
+}
+
 export default async function Page() {
-  const [products, homeSettings, clients, certifications, exportRegions] = await Promise.all([
+  const [products, homeSettings, clients, certifications, exportRegions, homeBanners] = await Promise.all([
     getProducts(),
     getSettings('home'),
     getClients(),
     getCertifications(),
     getExportRegions(),
+    getHomeBanners(),
   ]);
 
   return (
@@ -74,6 +86,7 @@ export default async function Page() {
       clients={clients}
       certifications={certifications}
       exportRegions={exportRegions}
+      homeBanners={homeBanners}
     />
   );
 }

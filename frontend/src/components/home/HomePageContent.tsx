@@ -16,11 +16,15 @@ import ProductCard from "@/components/shared/ProductCard";
 import SafeImage from "@/components/shared/SafeImage";
 import { useGlobalSettings } from "@/context/GlobalSettingsContext";
 import dynamic from "next/dynamic";
-
 const QuoteModal = dynamic(() => import("@/components/shared/QuoteModal"), { ssr: false });
 const ImageModal = dynamic(() => import("@/components/shared/ImageModal"), { ssr: false });
 
+import { products as localProducts } from "@/data/products";
+import { AnimatePresence } from "framer-motion";
+import { useEffect } from "react";
+
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -40,33 +44,71 @@ interface HomePageContentProps {
   clients?: any[];
   certifications?: any[];
   exportRegions?: any[];
+  homeBanners?: any[];
 }
 
-export default function HomePageContent({ products, homeSettings, clients = [], certifications = [], exportRegions = [] }: HomePageContentProps) {
+export default function HomePageContent({ products, homeSettings, clients = [], certifications = [], exportRegions = [], homeBanners = [] }: HomePageContentProps) {
   const [selectedProductForQuote, setSelectedProductForQuote] = useState<any | null>(null);
   const [selectedCertForModal, setSelectedCertForModal] = useState<any | null>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
   const timelineInView = useInView(timelineRef, { once: true, margin: "-100px" });
 
-  const featuredProducts = products.filter((p: any) => p.featured).slice(0, 3);
-  const displayProducts = featuredProducts.length > 0 ? featuredProducts : products.slice(0, 3);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    if (homeBanners && homeBanners.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % homeBanners.length);
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [homeBanners]);
+
+  const mergedProducts = products && products.length > 0 ? products : localProducts;
+  const featuredProducts = mergedProducts.filter((p: any) => p.featured).slice(0, 3);
+  const displayProducts = featuredProducts.length > 0 ? featuredProducts : mergedProducts.slice(0, 3);
 
   return (
     <>
       {/* ─── HERO ─────────────────────────────────────────────── */}
       <section className="relative min-h-[85vh] sm:min-h-[90vh] flex items-center bg-charcoal overflow-hidden">
         <div className="absolute inset-0">
-          <SafeImage
-            src={IMAGES.HERO_FACTORY}
-            alt="Recycled plastic manufacturing facility"
-            useNextImage={true}
-            fill
-            priority
-            sizes="100vw"
-            quality={80}
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-charcoal/90 via-charcoal/75 to-charcoal/50" />
+          <AnimatePresence mode="popLayout">
+            {homeBanners && homeBanners.length > 0 ? (
+              <motion.div
+                key={currentSlide}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1 }}
+                className="absolute inset-0"
+              >
+                <SafeImage
+                  src={homeBanners[currentSlide]?.imageUrl}
+                  alt="Home Banner"
+                  useNextImage={true}
+                  fill
+                  priority
+                  sizes="100vw"
+                  quality={80}
+                  className="object-cover"
+                />
+              </motion.div>
+            ) : (
+              <div className="absolute inset-0">
+                <SafeImage
+                  src={IMAGES.HERO_FACTORY}
+                  alt="Recycled plastic manufacturing facility"
+                  useNextImage={true}
+                  fill
+                  priority
+                  sizes="100vw"
+                  quality={80}
+                  className="object-cover"
+                />
+              </div>
+            )}
+          </AnimatePresence>
         </div>
         <div className="w-full container-wide relative z-10 py-20 sm:py-24">
           <FadeIn className="max-w-2xl">

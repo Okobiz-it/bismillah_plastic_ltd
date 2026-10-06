@@ -1,7 +1,9 @@
 import mongoose from 'mongoose';
 
-const schema = new mongoose.Schema({
-  // define schema fields here based on requirements
+const homeBannerSchema = new mongoose.Schema({
+  imageUrl: { type: String, required: true },
+  isActive: { type: Boolean, default: true },
+  order: { type: Number, default: 0 }
 }, { timestamps: true });
 
-export const HomeContent = mongoose.model('HomeContent', schema);
+export const HomeBanner = mongoose.model('HomeBanner', homeBannerSchema);
