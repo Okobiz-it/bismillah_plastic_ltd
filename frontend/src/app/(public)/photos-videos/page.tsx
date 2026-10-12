@@ -1,6 +1,6 @@
 import { API_BASE } from "@/lib/api";
 import PhotosVideosPageContent from "@/components/media/PhotosVideosPageContent";
-import { defaultPhotos, defaultVideos } from "@/data/mediaData";
+import { fetchPageBanner } from "@/lib/pageBanners";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -46,10 +46,11 @@ async function getMediaSettings() {
 }
 
 export default async function PhotosVideosPage() {
-  const [photos, videos, settings] = await Promise.all([
+  const [photos, videos, settings, banner] = await Promise.all([
     getPhotos(),
     getVideos(),
     getMediaSettings(),
+    fetchPageBanner("photos-videos"),
   ]);
 
   return (
@@ -57,6 +58,8 @@ export default async function PhotosVideosPage() {
       photos={photos}
       videos={videos}
       settings={settings}
+      banner={banner}
     />
   );
 }
+

@@ -1,6 +1,7 @@
 import { API_BASE } from "@/lib/api";
 import ImpactPageContent from "@/components/impact/ImpactPageContent";
 import { defaultImpactData, ImpactData } from "@/data/impactData";
+import { fetchPageBanner } from "@/lib/pageBanners";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -25,6 +26,11 @@ async function getImpactData(): Promise<ImpactData> {
 }
 
 export default async function ImpactPage() {
-  const impactData = await getImpactData();
-  return <ImpactPageContent data={impactData} />;
+  const [impactData, banner] = await Promise.all([
+    getImpactData(),
+    fetchPageBanner("impact"),
+  ]);
+
+  return <ImpactPageContent data={impactData} banner={banner} />;
 }
+

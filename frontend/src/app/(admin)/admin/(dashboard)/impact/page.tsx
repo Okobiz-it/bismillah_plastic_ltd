@@ -1,7 +1,7 @@
 import ExportAdminContent from "@/components/admin/ExportAdminContent";
 
 export const metadata = {
-  title: "Admin - Impact & Export Settings",
+  title: "Admin - Impact",
 };
 
 export default function AdminImpactPage() {

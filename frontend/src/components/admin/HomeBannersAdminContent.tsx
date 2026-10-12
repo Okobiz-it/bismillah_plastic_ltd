@@ -1,8 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { fetchApi } from "@/lib/api";
-import { FaPlus, FaTrash, FaTimes, FaImage, FaCheckCircle, FaRegCircle } from "react-icons/fa";
+import {
+  FaPlus,
+  FaTrash,
+  FaTimes,
+  FaImage,
+  FaCheckCircle,
+  FaRegCircle,
+  FaExternalLinkAlt,
+} from "react-icons/fa";
 import { useToast } from "@/context/ToastContext";
 import SafeImage from "@/components/shared/SafeImage";
 import AdminUploadButton from "@/components/admin/shared/AdminUploadButton";
@@ -96,18 +105,33 @@ export default function HomeBannersAdminContent() {
   };
 
   return (
-    <div className="p-4 md:p-5 relative">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
+    <div className="w-full space-y-6 animate-fadeIn pb-16">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-stone-200">
         <div>
-          <h3 className="text-lg font-semibold text-brand">Home Banners</h3>
-          <p className="text-sm text-stone-500 mt-1">Manage the image sliders shown on the homepage hero section.</p>
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-700 mb-1">
+            <FaImage /> Hero Slider Management
+          </div>
+          <h1 className="text-2xl font-serif font-bold text-brand">Home Banners</h1>
+          <p className="text-sm text-stone-500 mt-1">
+            Manage the image sliders shown on the homepage hero section.
+          </p>
         </div>
-        <button
-          onClick={openModal}
-          className="admin-btn-primary w-full sm:w-auto"
-        >
-          <FaPlus /> Add Banner
-        </button>
+        <div className="flex flex-wrap items-center gap-2.5">
+          <Link
+            href="/"
+            target="_blank"
+            className="admin-btn-secondary !rounded-[4px] text-xs flex items-center gap-1.5"
+          >
+            <FaExternalLinkAlt className="text-xs" /> View Homepage
+          </Link>
+          <button
+            onClick={openModal}
+            className="admin-btn-primary !rounded-[4px] text-xs flex items-center gap-1.5 cursor-pointer"
+          >
+            <FaPlus className="w-2.5 h-2.5" /> Add New Banner
+          </button>
+        </div>
       </div>
 
       {loading ? (
@@ -115,40 +139,40 @@ export default function HomeBannersAdminContent() {
           <div className="w-8 h-8 border-4 border-stone-200 border-t-gold rounded-full animate-spin"></div>
         </div>
       ) : (
-        <div className="admin-table-container">
+        <div className="admin-table-container !rounded-[4px]">
           <table className="admin-table">
             <thead className="bg-stone-50">
               <tr className="border-b border-stone-200">
-                <th className="py-3 px-4 text-xs uppercase tracking-wider font-bold text-stone-600">Image</th>
-                <th className="py-3 px-4 text-xs uppercase tracking-wider font-bold text-stone-600">Status</th>
-                <th className="py-3 px-4 text-xs uppercase tracking-wider font-bold text-stone-600 text-right">Actions</th>
+                <th className="py-2.5 px-4 text-xs uppercase tracking-wider font-bold text-stone-600">Image</th>
+                <th className="py-2.5 px-4 text-xs uppercase tracking-wider font-bold text-stone-600">Status</th>
+                <th className="py-2.5 px-4 text-xs uppercase tracking-wider font-bold text-stone-600 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-100">
               {banners.map((banner) => (
                 <tr key={banner._id} className="hover:bg-stone-50/50 transition-colors">
-                  <td className="py-3 px-4">
-                    <div className="w-40 h-20 relative bg-stone-200 flex items-center justify-center rounded-sm overflow-hidden border border-stone-200 shadow-sm">
+                  <td className="py-2.5 px-4">
+                    <div className="w-40 h-20 relative bg-stone-200 flex items-center justify-center rounded-[4px] overflow-hidden border border-stone-200 shadow-xs">
                       <SafeImage src={banner.imageUrl} alt="Banner" className="w-full h-full object-cover" />
                     </div>
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-2.5 px-4">
                     <button
                       onClick={() => toggleActive(banner._id)}
-                      className={`flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full border transition-colors ${
+                      className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-[4px] border transition-colors cursor-pointer ${
                         banner.isActive
                           ? "bg-green-50 text-green-700 border-green-200 hover:bg-green-100"
                           : "bg-stone-100 text-stone-600 border-stone-200 hover:bg-stone-200"
                       }`}
                     >
-                      {banner.isActive ? <FaCheckCircle /> : <FaRegCircle />}
+                      {banner.isActive ? <FaCheckCircle size={11} /> : <FaRegCircle size={11} />}
                       {banner.isActive ? "Active" : "Inactive"}
                     </button>
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-2.5 px-4">
                     <div className="flex gap-2 justify-end">
-                      <button onClick={() => handleDelete(banner._id)} className="admin-btn-icon-danger" title="Delete">
-                        <FaTrash size={14} />
+                      <button onClick={() => handleDelete(banner._id)} className="admin-btn-icon-danger !rounded-[4px]" title="Delete">
+                        <FaTrash size={13} />
                       </button>
                     </div>
                   </td>
@@ -170,28 +194,29 @@ export default function HomeBannersAdminContent() {
       {/* MODAL */}
       {isModalOpen && (
         <div className="admin-modal-overlay">
-          <div className="admin-modal-content max-w-md">
+          <div className="admin-modal-content max-w-md !rounded-[4px]">
             <div className="admin-modal-header">
-              <h2 className="text-xl font-serif font-bold text-brand">
+              <h2 className="text-lg font-serif font-bold text-brand">
                 Add New Banner
               </h2>
-              <button onClick={closeModal} className="text-stone-400 hover:text-stone-700 transition-colors p-2 cursor-pointer">
-                <FaTimes size={20} />
+              <button onClick={closeModal} className="text-stone-400 hover:text-stone-700 transition-colors p-1.5 cursor-pointer">
+                <FaTimes size={18} />
               </button>
             </div>
 
             <div className="admin-modal-body">
-              <form id="bannerForm" onSubmit={handleSubmit} className="space-y-6">
+              <form id="bannerForm" onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-semibold text-stone-700 mb-2">
+                  <label className="block text-xs font-semibold text-stone-700 mb-1.5">
                     Banner Image <span className="text-red-500">*</span>
                   </label>
                   <AdminUploadButton
                     onFileSelect={file => setImageFile(file)}
                     selectedFile={imageFile}
                     label="Upload Banner Image"
+                    roundedClassName="rounded-[4px]"
                   />
-                  <p className="text-xs text-stone-500 mt-1.5">Please upload a high-quality landscape image (1920x1080 recommended).</p>
+                  <p className="text-[11px] text-stone-500 mt-1.5">Please upload a high-quality landscape image (1920x1080 recommended).</p>
                 </div>
               </form>
             </div>
@@ -200,7 +225,7 @@ export default function HomeBannersAdminContent() {
               <button
                 type="button"
                 onClick={closeModal}
-                className="admin-btn-secondary w-full sm:w-auto"
+                className="admin-btn-secondary !rounded-[4px] text-xs py-1.5 px-3 w-full sm:w-auto"
                 disabled={submitting}
               >
                 Cancel
@@ -209,7 +234,7 @@ export default function HomeBannersAdminContent() {
                 type="submit"
                 form="bannerForm"
                 disabled={submitting}
-                className="admin-btn-primary w-full sm:w-auto"
+                className="admin-btn-primary !rounded-[4px] text-xs py-1.5 px-3 w-full sm:w-auto"
               >
                 {submitting ? 'Saving...' : 'Upload Banner'}
               </button>

@@ -3,18 +3,28 @@ export interface TrajectoryRow {
   capacity: string;
 }
 
+export interface ImpactPillarSection {
+  id: string;
+  title: string;
+  description: string;
+  icon?: string;
+}
+
 export interface EnvironmentalData {
   title: string;
   intro: string;
   imageUrl: string;
   imageAlt: string;
-  metricDiversionTitle: string;
-  metricDiversionDescription: string;
+  trajectoryTitle?: string;
   trajectory: TrajectoryRow[];
-  ecosystemProtectionTitle: string;
-  ecosystemProtectionDescription: string;
-  closedLoopTitle: string;
-  closedLoopDescription: string;
+  sections: ImpactPillarSection[];
+  // Backwards compatibility legacy fields
+  metricDiversionTitle?: string;
+  metricDiversionDescription?: string;
+  ecosystemProtectionTitle?: string;
+  ecosystemProtectionDescription?: string;
+  closedLoopTitle?: string;
+  closedLoopDescription?: string;
 }
 
 export interface SocialData {
@@ -22,14 +32,16 @@ export interface SocialData {
   intro: string;
   imageUrl: string;
   imageAlt: string;
-  womensEmpowermentTitle: string;
-  womensEmpowermentDescription: string;
-  informalIntegrationTitle: string;
-  informalIntegrationDescription: string;
-  workerWelfareTitle: string;
-  workerWelfareDescription: string;
-  laborRightsTitle: string;
-  laborRightsDescription: string;
+  sections: ImpactPillarSection[];
+  // Backwards compatibility legacy fields
+  womensEmpowermentTitle?: string;
+  womensEmpowermentDescription?: string;
+  informalIntegrationTitle?: string;
+  informalIntegrationDescription?: string;
+  workerWelfareTitle?: string;
+  workerWelfareDescription?: string;
+  laborRightsTitle?: string;
+  laborRightsDescription?: string;
 }
 
 export interface SdgItem {
@@ -68,23 +80,39 @@ export const defaultImpactData: ImpactData = {
     headline: "Transforming Regional Waste Into Sustainable Circular Impact",
     description:
       "Bismillah Plastic operates at the intersection of environmental conservation and social equity in northern Bangladesh — converting post-consumer plastic waste into industrial feedstock while empowering grassroots communities.",
-    imageUrl: "https://res.cloudinary.com/wpttnkjq/image/upload/f_auto,q_auto,w_1920/v1791200099/www.beatsnoop.com-3000-dg68Te34ty_vfohh2_oqucfb.jpg",
+    imageUrl:
+      "https://res.cloudinary.com/wpttnkjq/image/upload/f_auto,q_auto,w_1920/v1791200099/www.beatsnoop.com-3000-dg68Te34ty_vfohh2_oqucfb.jpg",
   },
   stats: [
-    { value: "15,000 MT → 24,000 MT", label: "5-Year Processing Trajectory", sublabel: "Scaling capacity across Year 1 to Year 5" },
-    { value: "30 Centers", label: "Decentralized Collection", sublabel: "100% overseen by designated women-led managers" },
-    { value: "Unit 1 & Unit 2", label: "Ecosystem Defense", sublabel: "Chawliapotti & Damail intercepting multi-category plastics" },
-    { value: "4 UN SDGs", label: "Global Goal Alignment", sublabel: "Documented proof points across 6 UN targets" },
+    {
+      value: "15,000 MT → 24,000 MT",
+      label: "5-Year Processing Trajectory",
+      sublabel: "Scaling capacity across Year 1 to Year 5",
+    },
+    {
+      value: "30 Centers",
+      label: "Decentralized Collection",
+      sublabel: "100% overseen by designated women-led managers",
+    },
+    {
+      value: "Unit 1 & Unit 2",
+      label: "Ecosystem Defense",
+      sublabel: "Chawliapotti & Damail intercepting multi-category plastics",
+    },
+    {
+      value: "4 UN SDGs",
+      label: "Global Goal Alignment",
+      sublabel: "Documented proof points across 6 UN targets",
+    },
   ],
   environmental: {
     title: "Environmental & Circular Economy Contribution",
     intro:
       "Our operations act as a direct and measurable intervention against regional waste management deficits in Dinajpur, preventing severe degradation of land and water ecosystems while enabling closed-loop material cycles.",
-    imageUrl: "https://res.cloudinary.com/wpttnkjq/image/upload/f_auto,q_auto,w_1000/v1791198797/DSC_0475_1_itkrl4.jpg",
+    imageUrl:
+      "https://res.cloudinary.com/wpttnkjq/image/upload/f_auto,q_auto,w_1000/v1791198797/DSC_0475_1_itkrl4.jpg",
     imageAlt: "Environmental and circular economy contribution",
-    metricDiversionTitle: "Metric-Driven Diversion",
-    metricDiversionDescription:
-      "Highlighting our structured five-year trajectory scaling from 15,000 MT (Year 1) to a projected 24,000 MT (Year 5) in annual processing capacity. This systematic scale provides municipal-level diversion for post-consumer waste across northern Bangladesh.",
+    trajectoryTitle: "5-Year Capacity Trajectory Rows",
     trajectory: [
       { year: "Year 1", capacity: "15,000 MT" },
       { year: "Year 2", capacity: "17,000 MT" },
@@ -92,6 +120,32 @@ export const defaultImpactData: ImpactData = {
       { year: "Year 4", capacity: "20,000 MT" },
       { year: "Year 5", capacity: "24,000 MT" },
     ],
+    sections: [
+      {
+        id: "env-1",
+        title: "1. Metric-Driven Diversion & 5-Year Trajectory",
+        description:
+          "Highlighting our structured five-year trajectory scaling from 15,000 MT (Year 1) to a projected 24,000 MT (Year 5) in annual processing capacity. This systematic scale provides municipal-level diversion for post-consumer waste across northern Bangladesh.",
+        icon: "FaIndustry",
+      },
+      {
+        id: "env-2",
+        title: "2. Ecosystem Protection",
+        description:
+          "Operations at Unit 1 (Chawliapotti) and Unit 2 (Damail) directly intercept multi-category plastics — including PET, HDPE, multi-layer sachets, and end-of-life tires — preventing them from polluting Dinajpur's vital arable lands, municipal drainage networks, and surrounding river water resources.",
+        icon: "FaShieldAlt",
+      },
+      {
+        id: "env-3",
+        title: "3. Closed-Loop Feedstock",
+        description:
+          "Through advanced mechanical recycling leveraging hot and cold washing, industrial crushers, and centrifugal drying, we produce clean, uniform, high-quality recycled flakes. These refined materials provide critical raw feedstock for downstream manufacturers, actively reducing industrial reliance on virgin fossil plastics.",
+        icon: "FaRecycle",
+      },
+    ],
+    metricDiversionTitle: "Metric-Driven Diversion & 5-Year Trajectory",
+    metricDiversionDescription:
+      "Highlighting our structured five-year trajectory scaling from 15,000 MT (Year 1) to a projected 24,000 MT (Year 5) in annual processing capacity. This systematic scale provides municipal-level diversion for post-consumer waste across northern Bangladesh.",
     ecosystemProtectionTitle: "Ecosystem Protection",
     ecosystemProtectionDescription:
       "Operations at Unit 1 (Chawliapotti) and Unit 2 (Damail) directly intercept multi-category plastics — including PET, HDPE, multi-layer sachets, and end-of-life tires — preventing them from polluting Dinajpur's vital arable lands, municipal drainage networks, and surrounding river water resources.",
@@ -103,9 +157,40 @@ export const defaultImpactData: ImpactData = {
     title: "Social Inclusion & Livelihood Development",
     intro:
       "Circular economy success requires human dignity at its foundation. Bismillah Plastic integrates marginalized grassroots workers into a safe, formalized, and legally compliant value chain.",
-    imageUrl: "https://res.cloudinary.com/wpttnkjq/image/upload/f_auto,q_auto,w_1000/v1791200667/DSC_0175_1_egfwtu.jpg",
+    imageUrl:
+      "https://res.cloudinary.com/wpttnkjq/image/upload/f_auto,q_auto,w_1000/v1791200667/DSC_0175_1_egfwtu.jpg",
     imageAlt: "Social inclusion and livelihood development",
-    womensEmpowermentTitle: "Women’s Empowerment",
+    sections: [
+      {
+        id: "soc-1",
+        title: "Women's Empowerment",
+        description:
+          "A flagship decentralization strategy anchored by 30 dedicated collection centers across the Dinajpur district, specifically structured such that each individual center is systematically overseen by a designated women-led manager. This delivers economic autonomy and leadership roles to women at the grassroots level.",
+        icon: "FaFemale",
+      },
+      {
+        id: "soc-2",
+        title: "Informal Sector Integration",
+        description:
+          "Documented formalization transitioning marginalized community collectors, itinerant waste pickers, and paddle-van drivers out of unregulated vulnerability into a predictable, transparent, and structured supply chain with guaranteed fair off-take.",
+        icon: "FaHandsHelping",
+      },
+      {
+        id: "soc-3",
+        title: "Worker Welfare & Safety",
+        description:
+          "Rigorous Occupational Health and Safety (OHS) protocols implemented across all facilities: mandatory personal protective equipment (PPE), hazard identification drills, on-site first-aid facilities, periodic health screenings, and formalized healthcare partnerships with a local hospital.",
+        icon: "FaHeartbeat",
+      },
+      {
+        id: "soc-4",
+        title: "Labor Rights Compliance",
+        description:
+          "Uncompromising zero-tolerance policies prohibiting child labor and forced labor across the enterprise and its entire subcontractor network, governed by documented gender-neutral hiring and equal opportunity frameworks.",
+        icon: "FaBalanceScale",
+      },
+    ],
+    womensEmpowermentTitle: "Women's Empowerment",
     womensEmpowermentDescription:
       "A flagship decentralization strategy anchored by 30 dedicated collection centers across the Dinajpur district, specifically structured such that each individual center is systematically overseen by a designated women-led manager. This delivers economic autonomy and leadership roles to women at the grassroots level.",
     informalIntegrationTitle: "Informal Sector Integration",

@@ -59,6 +59,7 @@ interface Props {
   photos?: PhotoItem[];
   videos?: VideoItem[];
   settings?: MediaSettings | null;
+  banner?: any;
 }
 
 // Extract embed URL for YouTube, Vimeo, or direct Cloudinary/MP4 video
@@ -124,6 +125,7 @@ export default function PhotosVideosPageContent({
   photos = defaultPhotos,
   videos = defaultVideos,
   settings,
+  banner,
 }: Props) {
   // Local reactive states synced with live DB updates
   const [photoList, setPhotoList] = useState<PhotoItem[]>(photos && photos.length > 0 ? photos : defaultPhotos);
@@ -266,10 +268,14 @@ export default function PhotosVideosPageContent({
     }
   }, [activePhoto, activeVideo]);
 
-  const heading = settings?.heading || "Photos & Videos Showcase";
+  const heroImage = banner?.imageUrl || settings?.heroImageUrl || IMAGES.HERO_GALLERY;
+  const heroSubtitle = banner?.subtitle !== undefined && banner?.subtitle !== "" ? banner.subtitle : "Visual Media & Documentary Hub";
+  const heading = banner?.title !== undefined && banner?.title !== "" ? banner.title : (settings?.heading || "Photos & Videos Showcase");
   const subheading =
-    settings?.subheading ||
-    "A structured visual narrative illustrating our journey — from grassroots collection and women-led centers to industrial mechanical recycling and community impact.";
+    banner?.description !== undefined && banner?.description !== ""
+      ? banner.description
+      : (settings?.subheading ||
+        "A structured visual narrative illustrating our journey — from grassroots collection and women-led centers to industrial mechanical recycling and community impact.");
 
   // Lightbox handlers
   const handleOpenLightbox = (photo: PhotoItem) => {
@@ -342,8 +348,8 @@ export default function PhotosVideosPageContent({
       <section className="relative pt-24 sm:pt-32 md:pt-36 pb-12 sm:pb-16 md:pb-20 min-h-[300px] sm:min-h-[360px] md:min-h-[420px] flex items-center bg-brand text-white overflow-hidden w-full">
         <div className="absolute inset-0">
           <Image
-            src={settings?.heroImageUrl || IMAGES.HERO_GALLERY}
-            alt="Photos and Videos Showcase"
+            src={heroImage}
+            alt={heading || "Photos and Videos Showcase"}
             fill
             sizes="100vw"
             quality={85}
@@ -354,13 +360,15 @@ export default function PhotosVideosPageContent({
         </div>
 
         <div className="container-wide relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-            <div className="h-px w-6 sm:w-8 bg-emerald-400/80" />
-            <span className="eyebrow text-emerald-300 text-[10px] sm:text-xs tracking-wider">
-              Visual Media & Documentary Hub
-            </span>
-            <div className="h-px w-6 sm:w-8 bg-emerald-400/80" />
-          </div>
+          {heroSubtitle && (
+            <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+              <div className="h-px w-6 sm:w-8 bg-emerald-400/80" />
+              <span className="eyebrow text-emerald-300 text-[10px] sm:text-xs tracking-wider">
+                {heroSubtitle}
+              </span>
+              <div className="h-px w-6 sm:w-8 bg-emerald-400/80" />
+            </div>
+          )}
 
           <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl text-white font-bold leading-tight mb-3 sm:mb-4 tracking-tight px-2 break-words">
             {heading}

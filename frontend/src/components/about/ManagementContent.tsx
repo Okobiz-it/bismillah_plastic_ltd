@@ -253,26 +253,31 @@ function ManagementCard({ member, index, onSeeMore }: { member: any; index: numb
   );
 }
 
-export default function ManagementContent({ team = [] }: { team?: any[] }) {
+export default function ManagementContent({ team = [], banner }: { team?: any[]; banner?: any }) {
   const displayTeam = team.length > 0 ? team : teamMembers;
   const [selectedMember, setSelectedMember] = useState<any | null>(null);
+
+  const heroImage = banner?.imageUrl || IMAGES.HERO_MANAGEMENT;
+  const heroSubtitle = banner?.subtitle !== undefined && banner?.subtitle !== "" ? banner.subtitle : "EXECUTIVE TEAM";
+  const heroTitle = banner?.title !== undefined && banner?.title !== "" ? banner.title : "Leadership & Management";
+  const heroDescription = banner?.description !== undefined && banner?.description !== "" ? banner.description : "Our team combines experience in waste management, mechanical recycling, community collection networks, and processing operations across the Dinajpur region.";
 
   return (
     <>
       {/* Hero Section */}
       <section className="relative pt-24 sm:pt-28 md:pt-32 pb-16 sm:pb-20 md:pb-24 min-h-[350px] sm:min-h-[400px] flex items-center">
         <div className="absolute inset-0">
-          <Image src={IMAGES.HERO_MANAGEMENT} alt="Executive Leadership Team" fill sizes="100vw" quality={85} className="object-cover" />
+          <Image src={heroImage} alt={heroTitle || "Executive Leadership Team"} fill sizes="100vw" quality={85} className="object-cover" />
           <div className="absolute inset-0 bg-brand/85" />
         </div>
         <div className="container-wide relative z-10 text-center">
           <FadeIn>
-            <span className="eyebrow text-white block mb-4">EXECUTIVE TEAM</span>
+            {heroSubtitle && <span className="eyebrow text-white block mb-4">{heroSubtitle}</span>}
             <h1 className="font-serif text-white font-semibold mb-4 sm:mb-6 max-w-4xl mx-auto leading-tight" style={{ fontSize: 'clamp(2rem, 3vw + 0.75rem, 3.75rem)' }}>
-              Leadership & Management
+              {heroTitle}
             </h1>
             <p className="text-white/70 text-lg max-w-2xl mx-auto leading-relaxed">
-              Our team combines experience in waste management, mechanical recycling, community collection networks, and processing operations across the Dinajpur region.
+              {heroDescription}
             </p>
           </FadeIn>
         </div>

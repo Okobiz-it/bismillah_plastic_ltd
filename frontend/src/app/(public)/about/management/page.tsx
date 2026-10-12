@@ -1,5 +1,6 @@
 import ManagementContent from "@/components/about/ManagementContent";
 import { API_BASE } from "@/lib/api";
+import { fetchPageBanner } from "@/lib/pageBanners";
 
 export const dynamic = 'force-dynamic';
 
@@ -15,6 +16,11 @@ async function getTeam() {
 }
 
 export default async function Page() {
-  const team = await getTeam();
-  return <ManagementContent team={team} />;
+  const [team, banner] = await Promise.all([
+    getTeam(),
+    fetchPageBanner("about/management"),
+  ]);
+
+  return <ManagementContent team={team} banner={banner} />;
 }
+

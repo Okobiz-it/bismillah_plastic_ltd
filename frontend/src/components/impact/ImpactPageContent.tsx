@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import CTABanner from "@/components/shared/CTABanner";
 import { ImpactData, defaultImpactData } from "@/data/impactData";
+import { renderAppIcon } from "@/components/shared/IconRenderer";
 import {
   FaCheckCircle,
   FaShieldAlt,
@@ -40,11 +41,17 @@ function FadeIn({
 
 interface ImpactPageContentProps {
   data?: ImpactData | null;
+  banner?: any;
 }
 
-export default function ImpactPageContent({ data }: ImpactPageContentProps) {
+export default function ImpactPageContent({ data, banner }: ImpactPageContentProps) {
   const content = data || defaultImpactData;
   const { hero, stats, environmental, social, sdgs } = content;
+
+  const heroImage = banner?.imageUrl || hero.imageUrl || defaultImpactData.hero.imageUrl!;
+  const heroSubtitle = banner?.subtitle !== undefined && banner?.subtitle !== "" ? banner.subtitle : hero.eyebrow;
+  const heroTitle = banner?.title !== undefined && banner?.title !== "" ? banner.title : hero.headline;
+  const heroDescription = banner?.description !== undefined && banner?.description !== "" ? banner.description : hero.description;
 
   return (
     <>
@@ -52,8 +59,8 @@ export default function ImpactPageContent({ data }: ImpactPageContentProps) {
       <section className="relative pt-28 sm:pt-32 md:pt-36 pb-16 sm:pb-20 min-h-[340px] sm:min-h-[400px] flex items-center bg-brand text-white overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src={hero.imageUrl || defaultImpactData.hero.imageUrl!}
-            alt="Sustainability and ESG Impact"
+            src={heroImage}
+            alt={heroTitle || "Sustainability and ESG Impact"}
             fill
             sizes="100vw"
             quality={85}
@@ -63,16 +70,18 @@ export default function ImpactPageContent({ data }: ImpactPageContentProps) {
           <div className="absolute inset-0 bg-gradient-to-r from-brand/95 via-brand/90 to-brand/80" />
         </div>
         <div className="container-wide relative z-10 text-center max-w-4xl mx-auto">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="h-px w-8 bg-emerald-400/80" />
-            <span className="eyebrow text-emerald-300">{hero.eyebrow}</span>
-            <div className="h-px w-8 bg-emerald-400/80" />
-          </div>
+          {heroSubtitle && (
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="h-px w-8 bg-emerald-400/80" />
+              <span className="eyebrow text-emerald-300">{heroSubtitle}</span>
+              <div className="h-px w-8 bg-emerald-400/80" />
+            </div>
+          )}
           <h1 className="font-serif fluid-h1 text-white font-bold leading-tight mb-4">
-            {hero.headline}
+            {heroTitle}
           </h1>
           <p className="text-base sm:text-lg text-white/80 max-w-3xl mx-auto leading-relaxed text-justify sm:text-center">
-            {hero.description}
+            {heroDescription}
           </p>
         </div>
       </section>
@@ -126,7 +135,7 @@ export default function ImpactPageContent({ data }: ImpactPageContentProps) {
                   <div className="flex items-center gap-2 mb-2">
                     <FaRecycle className="text-brand text-sm" />
                     <span className="text-xs font-bold uppercase tracking-wider text-brand">
-                      5-Year Processing Capacity Growth
+                      {environmental.trajectoryTitle || "5-Year Processing Capacity Growth"}
                     </span>
                   </div>
                   <div className="border-2 border-brand rounded-sm overflow-hidden shadow-sm bg-white">
@@ -189,56 +198,29 @@ export default function ImpactPageContent({ data }: ImpactPageContentProps) {
                 </p>
 
                 <div className="space-y-6">
-                  {/* Metric-Driven Diversion */}
-                  <div className="bg-white p-5 sm:p-6 rounded-sm border border-stone-200 shadow-xs hover:border-brand/30 transition-all">
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-full bg-emerald-100 text-brand flex items-center justify-center shrink-0 mt-0.5">
-                        <FaIndustry className="text-sm" />
-                      </div>
-                      <div>
-                        <h3 className="font-serif text-lg font-bold text-brand mb-1.5">
-                          {environmental.metricDiversionTitle}
-                        </h3>
-                        <p className="text-stone-600 leading-relaxed text-sm text-justify">
-                          {environmental.metricDiversionDescription}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Ecosystem Protection */}
-                  <div className="bg-white p-5 sm:p-6 rounded-sm border border-stone-200 shadow-xs hover:border-brand/30 transition-all">
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-full bg-emerald-100 text-brand flex items-center justify-center shrink-0 mt-0.5">
-                        <FaShieldAlt className="text-sm" />
-                      </div>
-                      <div>
-                        <h3 className="font-serif text-lg font-bold text-brand mb-1.5">
-                          {environmental.ecosystemProtectionTitle}
-                        </h3>
-                        <p className="text-stone-600 leading-relaxed text-sm text-justify">
-                          {environmental.ecosystemProtectionDescription}
-                        </p>
+                  {(environmental.sections && environmental.sections.length > 0
+                    ? environmental.sections
+                    : defaultImpactData.environmental.sections
+                  ).map((sec, idx) => (
+                    <div
+                      key={sec.id || idx}
+                      className="bg-white p-5 sm:p-6 rounded-sm border border-stone-200 shadow-xs hover:border-brand/30 transition-all"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-full bg-emerald-100 text-brand flex items-center justify-center shrink-0 mt-0.5">
+                          {renderAppIcon(sec.icon, "text-sm", <FaIndustry className="text-sm" />)}
+                        </div>
+                        <div>
+                          <h3 className="font-serif text-lg font-bold text-brand mb-1.5">
+                            {sec.title}
+                          </h3>
+                          <p className="text-stone-600 leading-relaxed text-sm text-justify">
+                            {sec.description}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-
-                  {/* Closed-Loop Feedstock */}
-                  <div className="bg-white p-5 sm:p-6 rounded-sm border border-stone-200 shadow-xs hover:border-brand/30 transition-all">
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-full bg-emerald-100 text-brand flex items-center justify-center shrink-0 mt-0.5">
-                        <FaRecycle className="text-sm" />
-                      </div>
-                      <div>
-                        <h3 className="font-serif text-lg font-bold text-brand mb-1.5">
-                          {environmental.closedLoopTitle}
-                        </h3>
-                        <p className="text-stone-600 leading-relaxed text-sm text-justify">
-                          {environmental.closedLoopDescription}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -293,73 +275,29 @@ export default function ImpactPageContent({ data }: ImpactPageContentProps) {
                 </p>
 
                 <div className="grid grid-cols-1 gap-5">
-                  {/* Women’s Empowerment */}
-                  <div className="bg-stone-50/70 p-5 sm:p-6 rounded-sm border border-stone-200 hover:border-brand/30 hover:bg-white transition-all shadow-xs">
-                    <div className="flex items-start gap-3.5">
-                      <div className="w-8 h-8 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center shrink-0 mt-0.5">
-                        <FaFemale className="text-sm" />
-                      </div>
-                      <div>
-                        <h3 className="font-serif text-lg font-bold text-brand mb-1.5">
-                          {social.womensEmpowermentTitle}
-                        </h3>
-                        <p className="text-stone-600 leading-relaxed text-sm text-justify">
-                          {social.womensEmpowermentDescription}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Informal Sector Integration */}
-                  <div className="bg-stone-50/70 p-5 sm:p-6 rounded-sm border border-stone-200 hover:border-brand/30 hover:bg-white transition-all shadow-xs">
-                    <div className="flex items-start gap-3.5">
-                      <div className="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 mt-0.5">
-                        <FaHandsHelping className="text-sm" />
-                      </div>
-                      <div>
-                        <h3 className="font-serif text-lg font-bold text-brand mb-1.5">
-                          {social.informalIntegrationTitle}
-                        </h3>
-                        <p className="text-stone-600 leading-relaxed text-sm text-justify">
-                          {social.informalIntegrationDescription}
-                        </p>
+                  {(social.sections && social.sections.length > 0
+                    ? social.sections
+                    : defaultImpactData.social.sections
+                  ).map((sec, idx) => (
+                    <div
+                      key={sec.id || idx}
+                      className="bg-stone-50/70 p-5 sm:p-6 rounded-sm border border-stone-200 hover:border-brand/30 hover:bg-white transition-all shadow-xs"
+                    >
+                      <div className="flex items-start gap-3.5">
+                        <div className="w-8 h-8 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center shrink-0 mt-0.5">
+                          {renderAppIcon(sec.icon, "text-sm", <FaFemale className="text-sm" />)}
+                        </div>
+                        <div>
+                          <h3 className="font-serif text-lg font-bold text-brand mb-1.5">
+                            {sec.title}
+                          </h3>
+                          <p className="text-stone-600 leading-relaxed text-sm text-justify">
+                            {sec.description}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-
-                  {/* Worker Welfare & Safety */}
-                  <div className="bg-stone-50/70 p-5 sm:p-6 rounded-sm border border-stone-200 hover:border-brand/30 hover:bg-white transition-all shadow-xs">
-                    <div className="flex items-start gap-3.5">
-                      <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5">
-                        <FaHeartbeat className="text-sm" />
-                      </div>
-                      <div>
-                        <h3 className="font-serif text-lg font-bold text-brand mb-1.5">
-                          {social.workerWelfareTitle}
-                        </h3>
-                        <p className="text-stone-600 leading-relaxed text-sm text-justify">
-                          {social.workerWelfareDescription}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Labor Rights Compliance */}
-                  <div className="bg-stone-50/70 p-5 sm:p-6 rounded-sm border border-stone-200 hover:border-brand/30 hover:bg-white transition-all shadow-xs">
-                    <div className="flex items-start gap-3.5">
-                      <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 mt-0.5">
-                        <FaBalanceScale className="text-sm" />
-                      </div>
-                      <div>
-                        <h3 className="font-serif text-lg font-bold text-brand mb-1.5">
-                          {social.laborRightsTitle}
-                        </h3>
-                        <p className="text-stone-600 leading-relaxed text-sm text-justify">
-                          {social.laborRightsDescription}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>

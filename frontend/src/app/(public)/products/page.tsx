@@ -1,5 +1,6 @@
 import { API_BASE } from "@/lib/api";
 import ProductsPageContent from "@/components/products/ProductsPageContent";
+import { fetchPageBanner } from "@/lib/pageBanners";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -37,11 +38,20 @@ async function getRawMaterials() {
 }
 
 export default async function ProductsPage() {
-  const [products, categories, rawMaterials] = await Promise.all([
+  const [products, categories, rawMaterials, banner] = await Promise.all([
     getProducts(),
     getCategories(),
     getRawMaterials(),
+    fetchPageBanner("products"),
   ]);
 
-  return <ProductsPageContent initialProducts={products} categories={categories} rawMaterials={rawMaterials} />;
+  return (
+    <ProductsPageContent
+      initialProducts={products}
+      categories={categories}
+      rawMaterials={rawMaterials}
+      banner={banner}
+    />
+  );
 }
+

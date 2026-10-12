@@ -296,35 +296,35 @@ body {
 
 /* Admin Utilities */
 .admin-input {
-  @apply w-full border border-stone-300 rounded-md px-2.5 py-2 sm:px-3 sm:py-2.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand/50 focus:border-brand transition-shadow bg-white;
+  @apply w-full border border-stone-300 rounded-[4px] px-2.5 py-2 sm:px-3 sm:py-2.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand/50 focus:border-brand transition-shadow bg-white;
 }
 
 .admin-card {
-  @apply bg-white rounded-lg border border-stone-200 shadow-sm p-3 sm:p-4 md:p-6;
+  @apply bg-white rounded-[4px] border border-stone-200 shadow-xs p-3 sm:p-4 md:p-6;
 }
 
 .admin-btn-primary {
-  @apply px-3 py-1.5 sm:px-4 sm:py-2 bg-brand text-white text-xs sm:text-sm font-medium rounded-md hover:bg-brand-light transition-colors flex items-center justify-center gap-1.5 sm:gap-2 disabled:opacity-50 min-h-[36px] sm:min-h-[40px];
+  @apply px-3 py-1.5 sm:px-4 sm:py-2 bg-brand text-white text-xs sm:text-sm font-medium rounded-[4px] hover:bg-brand-light transition-colors flex items-center justify-center gap-1.5 sm:gap-2 disabled:opacity-50 min-h-[36px] sm:min-h-[40px];
 }
 
 .admin-btn-secondary {
-  @apply px-3 py-1.5 sm:px-4 sm:py-2 bg-white text-stone-700 border border-stone-300 text-xs sm:text-sm font-medium rounded-md hover:bg-stone-50 transition-colors flex items-center justify-center gap-1.5 sm:gap-2 disabled:opacity-50 min-h-[36px] sm:min-h-[40px];
+  @apply px-3 py-1.5 sm:px-4 sm:py-2 bg-white text-stone-700 border border-stone-300 text-xs sm:text-sm font-medium rounded-[4px] hover:bg-stone-50 transition-colors flex items-center justify-center gap-1.5 sm:gap-2 disabled:opacity-50 min-h-[36px] sm:min-h-[40px];
 }
 
 .admin-btn-danger {
-  @apply px-3 py-1.5 sm:px-4 sm:py-2 bg-red-50 text-red-600 border border-red-200 text-xs sm:text-sm font-medium rounded-md hover:bg-red-100 transition-colors flex items-center justify-center gap-1.5 sm:gap-2 disabled:opacity-50 min-h-[36px] sm:min-h-[40px];
+  @apply px-3 py-1.5 sm:px-4 sm:py-2 bg-red-50 text-red-600 border border-red-200 text-xs sm:text-sm font-medium rounded-[4px] hover:bg-red-100 transition-colors flex items-center justify-center gap-1.5 sm:gap-2 disabled:opacity-50 min-h-[36px] sm:min-h-[40px];
 }
 
 .admin-btn-icon {
-  @apply p-1.5 sm:p-2 text-stone-500 hover:text-brand hover:bg-stone-100 rounded transition-colors flex items-center justify-center cursor-pointer;
+  @apply p-1.5 sm:p-2 text-stone-500 hover:text-brand hover:bg-stone-100 rounded-[4px] transition-colors flex items-center justify-center cursor-pointer;
 }
 
 .admin-btn-icon-danger {
-  @apply p-1.5 sm:p-2 text-stone-500 hover:text-red-600 hover:bg-red-50 rounded transition-colors flex items-center justify-center cursor-pointer;
+  @apply p-1.5 sm:p-2 text-stone-500 hover:text-red-600 hover:bg-red-50 rounded-[4px] transition-colors flex items-center justify-center cursor-pointer;
 }
 
 .admin-table-container {
-  @apply w-full overflow-x-auto rounded-md border border-stone-200;
+  @apply w-full overflow-x-auto rounded-[4px] border border-stone-200;
 }
 
 .admin-table {
@@ -344,7 +344,7 @@ body {
 }
 
 .admin-modal-content {
-  @apply bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] sm:max-h-[85vh] overflow-hidden flex flex-col animate-slideUp;
+  @apply bg-white rounded-[4px] shadow-2xl w-full max-w-2xl max-h-[90vh] sm:max-h-[85vh] overflow-hidden flex flex-col animate-slideUp;
 }
 
 .admin-modal-header {
@@ -362,13 +362,35 @@ body {
 /* Rich Text Editor & Renderer Styles */
 .ProseMirror {
   @apply outline-none w-full min-h-[150px];
+  color: inherit;
+}
+
+.ProseMirror p {
+  margin-bottom: 0.875rem;
+  line-height: 1.65;
+  color: inherit;
+}
+
+.ProseMirror p:last-child {
+  margin-bottom: 0;
+}
+
+.ProseMirror p:empty,
+.ProseMirror p:has(> br:only-child) {
+  min-height: 1.5em;
+  display: block;
 }
 
 .ProseMirror strong,
 .ProseMirror b,
 .prose strong,
-.prose b {
+.prose b,
+.prose [style*="font-weight: bold"],
+.prose [style*="font-weight: 700"],
+.prose [style*="font-weight: 800"],
+.prose [style*="font-weight: 900"] {
   font-weight: 700 !important;
+  color: inherit;
 }
 
 .ProseMirror em,
@@ -381,21 +403,23 @@ body {
 .ProseMirror u,
 .prose u {
   text-decoration: underline !important;
+  text-underline-offset: 3px;
 }
 
 .ProseMirror ul,
 .prose ul {
-  @apply list-disc list-outside pl-5 my-2;
+  @apply list-disc list-outside pl-5 my-3;
 }
 
 .ProseMirror ol,
 .prose ol {
-  @apply list-decimal list-outside pl-5 my-2;
+  @apply list-decimal list-outside pl-5 my-3;
 }
 
 .ProseMirror li,
 .prose li {
-  @apply my-1;
+  @apply my-1.5;
+  line-height: 1.6;
 }
 
 .ProseMirror li p,
@@ -405,20 +429,44 @@ body {
 
 .ProseMirror mark,
 .prose mark {
-  @apply bg-yellow-200 rounded px-1;
+  @apply bg-yellow-200 rounded-[2px] px-1;
 }
 
 /* Reusable renderer prose adjustments */
-.prose p {
-  @apply mb-2;
+.prose,
+.rich-text-content {
+  color: inherit;
 }
 
-.prose p:last-child {
-  @apply mb-0;
+.prose p,
+.rich-text-content p {
+  margin-bottom: 1.125rem;
+  line-height: 1.75;
+  color: inherit;
+}
+
+.prose p:last-child,
+.rich-text-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* Keep height for empty paragraphs or line-breaks created by pressing Enter */
+.prose p:empty,
+.rich-text-content p:empty,
+.prose p:has(> br:only-child),
+.rich-text-content p:has(> br:only-child) {
+  min-height: 1.5em;
+  display: block;
+}
+
+.prose br,
+.rich-text-content br {
+  display: inline;
 }
 
 .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
-  @apply font-bold text-brand mt-3 mb-1.5;
+  @apply font-bold mt-4 mb-2;
+  color: inherit;
 }
 
 .prose h1 { @apply text-xl; }
@@ -427,13 +475,14 @@ body {
 .prose h4 { @apply text-sm; }
 
 .prose a {
-  @apply text-brand underline hover:text-brand-light font-medium;
+  @apply underline hover:opacity-80 font-medium;
+  color: inherit;
 }
 
 .prose blockquote {
-  @apply border-l-4 border-stone-300 pl-3 italic text-stone-600 my-2;
+  @apply border-l-4 border-stone-300 pl-3.5 italic my-3 opacity-90;
 }
 
 .prose hr {
-  @apply my-3 border-stone-200;
+  @apply my-4 border-stone-200;
 }

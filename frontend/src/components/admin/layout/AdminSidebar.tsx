@@ -39,7 +39,8 @@ const navItems: NavItem[] = [
     label: "About",
     icon: FaInfoCircle,
     subItems: [
-      { label: "Mission, Vision & History", href: "/admin/about/mission-vision" },
+      { label: "Company Overview", href: "/admin/about/company-overview" },
+      { label: "Mission Vision", href: "/admin/about/mission-vision" },
       { label: "Management", href: "/admin/about/management" },
       { label: "Photos | Videos", href: "/admin/about/gallery" },
     ]
@@ -48,12 +49,20 @@ const navItems: NavItem[] = [
     label: "Banners",
     icon: FaImages,
     subItems: [
-      { label: "Home", href: "/admin/banners/home" }
+      { label: "Home", href: "/admin/banners/home" },
+      { label: "About", href: "/admin/banners/about" },
+      { label: "Mission & Vision", href: "/admin/banners/about/mission-vision" },
+      { label: "Management", href: "/admin/banners/about/management" },
+      { label: "Products", href: "/admin/banners/products" },
+      { label: "Business Operations", href: "/admin/banners/business-operations" },
+      { label: "Impact", href: "/admin/banners/impact" },
+      { label: "Photos | Videos", href: "/admin/banners/photos-videos" },
     ]
   },
+  { label: "Business Operations", href: "/admin/business-operations", icon: FaIndustry },
   { label: "Products", href: "/admin/products", icon: FaBoxOpen },
   { label: "Raw Materials", href: "/admin/raw-materials", icon: FaLeaf },
-  { label: "Impact", href: "/admin/export", icon: FaGlobeAmericas },
+  { label: "Impact", href: "/admin/impact", icon: FaGlobeAmericas },
   { label: "Testimonials", href: "/admin/testimonials", icon: FaComments },
   { label: "Quote Requests", href: "/admin/inquiries", icon: FaEnvelope },
 ];
@@ -79,13 +88,24 @@ function isPathActive(currentPathname: string, targetHref?: string): boolean {
   // Root match
   if (target === "/") return current === "/";
 
+  // Prevent parent /banners/about from matching sub-routes /banners/about/mission-vision and /banners/about/management
+  if (target === "/banners/about" && current !== "/banners/about") {
+    return false;
+  }
+
   // Prefix match for nested sub-routes
   if (current.startsWith(target + "/")) return true;
 
   // Known route aliases
   if (
     (target === "/about/gallery" && current === "/about/photos-videos") ||
-    (target === "/about/photos-videos" && current === "/about/gallery")
+    (target === "/about/photos-videos" && current === "/about/gallery") ||
+    (target === "/banners/photos-videos" && current === "/banners/gallery") ||
+    (target === "/banners/gallery" && current === "/banners/photos-videos") ||
+    (target === "/banners/about/mission-vision" && current === "/banners/mission-vision") ||
+    (target === "/banners/mission-vision" && current === "/banners/about/mission-vision") ||
+    (target === "/banners/about/management" && current === "/banners/management") ||
+    (target === "/banners/management" && current === "/banners/about/management")
   ) {
     return true;
   }

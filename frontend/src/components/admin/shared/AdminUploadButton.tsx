@@ -14,6 +14,8 @@ interface AdminUploadButtonProps {
   isLoading?: boolean;
   disabled?: boolean;
   className?: string;
+  buttonClassName?: string;
+  roundedClassName?: string;
   compact?: boolean;
 }
 
@@ -28,6 +30,8 @@ export default function AdminUploadButton({
   isLoading = false,
   disabled = false,
   className = "",
+  buttonClassName = "",
+  roundedClassName = "rounded-[4px]",
   compact = false,
 }: AdminUploadButtonProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -74,7 +78,7 @@ export default function AdminUploadButton({
         type="button"
         onClick={handleButtonClick}
         disabled={disabled || isLoading}
-        className={`inline-flex items-center justify-center gap-2 bg-brand hover:bg-brand-light active:scale-95 text-white font-medium rounded-lg transition-all duration-200 shadow-xs cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand/30 disabled:opacity-50 disabled:cursor-not-allowed ${
+        className={`inline-flex items-center justify-center gap-2 bg-brand hover:bg-brand-light active:scale-95 text-white font-medium ${roundedClassName} ${buttonClassName} transition-all duration-200 shadow-xs cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand/30 disabled:opacity-50 disabled:cursor-not-allowed ${
           compact ? "px-3 py-1.5 text-xs" : "px-4 py-2 text-xs sm:text-sm"
         }`}
       >
@@ -87,7 +91,7 @@ export default function AdminUploadButton({
       </button>
 
       {displayName && (
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-stone-100 border border-stone-200 rounded-md text-xs text-stone-700 max-w-[200px] sm:max-w-[260px] truncate">
+        <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 bg-stone-100 border border-stone-200 ${roundedClassName} text-xs text-stone-700 max-w-[200px] sm:max-w-[260px] truncate`}>
           <FaCheckCircle className="text-brand shrink-0 text-xs" />
           <span className="truncate">{displayName}</span>
           <button

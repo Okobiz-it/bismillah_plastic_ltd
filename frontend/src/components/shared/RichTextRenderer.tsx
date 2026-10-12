@@ -18,7 +18,11 @@ export default function RichTextRenderer({ content, className = "", clampLines }
     const isHTML = /<\/?[a-z][\s\S]*>/i.test(trimmed);
 
     if (isHTML) {
-      return trimmed;
+      // Normalize empty paragraphs and trailing breaks so Enter gaps render consistently
+      return trimmed
+        .replace(/<p><\/p>/gi, "<p><br /></p>")
+        .replace(/<p>\s*<\/p>/gi, "<p><br /></p>")
+        .replace(/<p><br class="[^"]*"><\/p>/gi, "<p><br /></p>");
     }
 
     // Convert plain text with newlines into HTML paragraphs and line breaks
@@ -32,7 +36,8 @@ export default function RichTextRenderer({ content, className = "", clampLines }
 
   return (
     <div 
-      className={`prose max-w-none text-inherit break-words leading-relaxed ${clampLines ? `line-clamp-${clampLines}` : ''} ${className}`}
+      className={`rich-text-content prose max-w-none break-words leading-relaxed ${clampLines ? `line-clamp-${clampLines}` : ''} ${className}`}
+      style={{ color: "inherit" }}
       dangerouslySetInnerHTML={{ __html: finalContent }}
     />
   );

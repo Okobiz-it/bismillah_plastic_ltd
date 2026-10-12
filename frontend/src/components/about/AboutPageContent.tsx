@@ -2,15 +2,19 @@
 
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import SectionHeader from "@/components/shared/SectionHeader";
 import CTABanner from "@/components/shared/CTABanner";
 import LogoMarquee from "@/components/shared/LogoMarquee";
 import SafeImage from "@/components/shared/SafeImage";
 import ImageModal from "@/components/shared/ImageModal";
-import { useState } from "react";
 import { useGlobalSettings } from "@/context/GlobalSettingsContext";
 import { IMAGES } from "@/constants/images";
+import {
+  AboutOverviewData,
+  defaultAboutOverviewData,
+} from "@/data/aboutData";
+import RichTextRenderer from "@/components/shared/RichTextRenderer";
 
 function FadeIn({
   children,
@@ -34,71 +38,121 @@ function FadeIn({
   );
 }
 
-
 interface AboutPageContentProps {
   journey?: any[];
   clients?: any[];
   certifications?: any[];
+  banner?: any;
+  overviewData?: AboutOverviewData | null;
 }
 
-export default function AboutPageContent({ journey = [], clients = [], certifications = [] }: AboutPageContentProps) {
+export default function AboutPageContent({
+  journey = [],
+  clients = [],
+  certifications = [],
+  banner,
+  overviewData,
+}: AboutPageContentProps) {
   const [selectedCertForModal, setSelectedCertForModal] = useState<any | null>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
   const timelineInView = useInView(timelineRef, { once: true, margin: "-100px" });
   const { companyName } = useGlobalSettings();
+
+  // Merge loaded dynamic overview data with defaults
+  const overview: AboutOverviewData = {
+    story: {
+      ...defaultAboutOverviewData.story,
+      ...(overviewData?.story || {}),
+    },
+    facilities: {
+      ...defaultAboutOverviewData.facilities,
+      ...(overviewData?.facilities || {}),
+      units:
+        overviewData?.facilities?.units && overviewData.facilities.units.length > 0
+          ? overviewData.facilities.units
+          : defaultAboutOverviewData.facilities.units,
+    },
+    socialImpact: {
+      ...defaultAboutOverviewData.socialImpact,
+      ...(overviewData?.socialImpact || {}),
+    },
+    safetyFocus: {
+      ...defaultAboutOverviewData.safetyFocus,
+      ...(overviewData?.safetyFocus || {}),
+      cards:
+        overviewData?.safetyFocus?.cards && overviewData.safetyFocus.cards.length > 0
+          ? overviewData.safetyFocus.cards
+          : defaultAboutOverviewData.safetyFocus.cards,
+    },
+    conclusion: {
+      ...defaultAboutOverviewData.conclusion,
+      ...(overviewData?.conclusion || {}),
+    },
+  };
+
+  const heroImage = banner?.imageUrl || IMAGES.HERO_ABOUT;
+  const heroSubtitle = banner?.subtitle !== undefined && banner?.subtitle !== "" ? banner.subtitle : "ABOUT US";
+  const heroTitle = banner?.title !== undefined && banner?.title !== "" ? banner.title : "Driving the Circular Plastics Economy";
+  const heroDescription =
+    banner?.description !== undefined && banner?.description !== ""
+      ? banner.description
+      : `Since 2016, ${companyName} has systematically transformed recovered post-consumer and industrial plastics into high-quality recycled materials — serving as a critical infrastructural link within the domestic circular economy.`;
 
   return (
     <>
       {/* Page Header (Hero) */}
       <section className="relative pt-24 sm:pt-28 md:pt-32 pb-16 sm:pb-20 md:pb-24 min-h-[350px] sm:min-h-[400px] md:min-h-[500px] flex items-center">
         <div className="absolute inset-0">
-          <Image src={IMAGES.HERO_ABOUT} alt="Company Overview" fill sizes="100vw" priority quality={80} className="object-cover" />
+          <Image
+            src={heroImage}
+            alt={heroTitle || "Company Overview"}
+            fill
+            sizes="100vw"
+            priority
+            quality={80}
+            className="object-cover"
+          />
           <div className="absolute inset-0 bg-brand/80" />
         </div>
         <div className="container-wide relative z-10 text-center">
           <FadeIn>
-            <span className="eyebrow text-white block mb-4">ABOUT US</span>
-            <h1 className="font-serif text-white font-semibold mb-4 sm:mb-6 max-w-4xl mx-auto leading-tight" style={{ fontSize: 'clamp(2rem, 3vw + 0.75rem, 3.75rem)' }}>
-              Driving the Circular Plastics Economy
+            {heroSubtitle && <span className="eyebrow text-white block mb-4">{heroSubtitle}</span>}
+            <h1
+              className="font-serif text-white font-semibold mb-4 sm:mb-6 max-w-4xl mx-auto leading-tight"
+              style={{ fontSize: "clamp(2rem, 3vw + 0.75rem, 3.75rem)" }}
+            >
+              {heroTitle}
             </h1>
             <p className="text-white/70 text-lg max-w-3xl mx-auto leading-relaxed">
-              Since 2016, {companyName} has systematically transformed recovered post-consumer and industrial plastics into high-quality recycled materials — serving as a critical infrastructural link within the domestic circular economy.
+              {heroDescription}
             </p>
           </FadeIn>
         </div>
       </section>
 
-      {/* Story Section */}
+      {/* ── OUR STORY SECTION ── */}
       <section className="section-padding bg-warm-white">
         <div className="container-wide">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
             <FadeIn>
               <div>
-                <span className="eyebrow">Our Story</span>
-                <h2 className="font-serif text-brand mt-3 mb-4 sm:mb-6 leading-tight" style={{ fontSize: 'clamp(1.5rem, 1.5vw + 0.75rem, 2.25rem)' }}>
-                  Addressing Regional Waste Management Challenges
+                {overview.story.badge && <span className="eyebrow">{overview.story.badge}</span>}
+                <h2
+                  className="font-serif text-brand mt-3 mb-4 sm:mb-6 leading-tight"
+                  style={{ fontSize: "clamp(1.5rem, 1.5vw + 0.75rem, 2.25rem)" }}
+                >
+                  {overview.story.heading}
                 </h2>
                 <div className="space-y-4 text-text-muted leading-relaxed">
-                  <p>
-                    {companyName} is a Bangladesh-based enterprise specializing in plastic waste
-                    collection and mechanical recycling. Operating out of the Dinajpur region, the
-                    organization addresses localized waste management challenges by systematically
-                    transforming recovered post-consumer and industrial plastics into reusable materials.
-                  </p>
-                  <p>
-                    The enterprise formally commenced operations on 02 January 2016 and functions
-                    through an integrated operational model that combines community-based waste
-                    collection with advanced mechanical processing capabilities. By managing the
-                    end-to-end recovery of assorted plastic materials, {companyName} serves as a
-                    critical infrastructural link within the domestic circular economy, providing
-                    essential raw material feedstocks for downstream manufacturing sectors.
-                  </p>
-                  <p>
-                    Today, the enterprise operates two primary processing facilities, manages a
-                    decentralized collection infrastructure anchored by 30 dedicated collection centers,
-                    and projects processing capacity scaling from 15,000 MT in Year 1 to 24,000 MT
-                    by Year 5 — working in conjunction with iDEA TREE as the project&rsquo;s development consultant.
-                  </p>
+                  {overview.story.paragraph ? (
+                    <RichTextRenderer content={overview.story.paragraph} />
+                  ) : (
+                    <>
+                      {overview.story.paragraph1 && <p>{overview.story.paragraph1}</p>}
+                      {overview.story.paragraph2 && <p>{overview.story.paragraph2}</p>}
+                      {overview.story.paragraph3 && <p>{overview.story.paragraph3}</p>}
+                    </>
+                  )}
                 </div>
               </div>
             </FadeIn>
@@ -106,7 +160,7 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
             <FadeIn delay={0.2}>
               <div className="relative rounded-sm overflow-hidden aspect-[3/4]">
                 <Image
-                  src={IMAGES.FACTORY_STORY}
+                  src={overview.story.imageUrl || IMAGES.FACTORY_STORY}
                   alt={`${companyName} factory operations`}
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
@@ -129,8 +183,8 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
                 <div className="relative aspect-[4/3] rounded-sm overflow-hidden shadow-lg">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={IMAGES.ABOUT_FACILITIES}
-                    alt="Bismillah Plastic processing facilities"
+                    src={overview.facilities.imageUrl || IMAGES.ABOUT_FACILITIES}
+                    alt="Facilities and operating units"
                     loading="lazy"
                     decoding="async"
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
@@ -141,11 +195,13 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
               {/* Content Right */}
               <div className="w-full lg:w-[55%]">
                 <h2 className="font-serif text-2xl sm:text-3xl text-brand font-bold leading-tight mb-5">
-                  Facilities &amp; Operating Units
+                  {overview.facilities.heading}
                 </h2>
-                <p className="text-stone-600 leading-relaxed text-justify text-[15px] mb-6">
-                  To manage its processing volumes, Bismillah Plastic operates two primary processing locations within the Dinajpur region of Bangladesh.
-                </p>
+                {overview.facilities.paragraph && (
+                  <div className="text-stone-600 leading-relaxed text-justify text-[15px] mb-6">
+                    <RichTextRenderer content={overview.facilities.paragraph} />
+                  </div>
+                )}
                 <div className="overflow-x-auto">
                   <div className="border-2 border-brand rounded-sm overflow-hidden shadow-sm">
                     <table className="w-full text-sm border-collapse">
@@ -156,14 +212,31 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
                         </tr>
                       </thead>
                       <tbody>
-                        <tr className="bg-stone-50">
-                          <td className="px-4 py-3 border-b border-stone-200 font-medium text-stone-700">Unit 1</td>
-                          <td className="px-4 py-3 border-b border-stone-200 text-stone-600">Chawliapotti, Baluadangga, Dinajpur, Bangladesh</td>
-                        </tr>
-                        <tr className="bg-white">
-                          <td className="px-4 py-3 font-medium text-stone-700">Unit 2</td>
-                          <td className="px-4 py-3 text-stone-600">Damail, Biral, Dinajpur, Bangladesh</td>
-                        </tr>
+                        {overview.facilities.units.map((u, idx) => (
+                          <tr
+                            key={idx}
+                            className={idx % 2 === 0 ? "bg-stone-50" : "bg-white"}
+                          >
+                            <td
+                              className={`px-4 py-3 font-medium text-stone-700 ${
+                                idx < overview.facilities.units.length - 1
+                                    ? "border-b border-stone-200"
+                                  : ""
+                              }`}
+                            >
+                              {u.unit}
+                            </td>
+                            <td
+                              className={`px-4 py-3 text-stone-600 ${
+                                idx < overview.facilities.units.length - 1
+                                  ? "border-b border-stone-200"
+                                  : ""
+                              }`}
+                            >
+                              {u.location}
+                            </td>
+                          </tr>
+                        ))}
                       </tbody>
                     </table>
                   </div>
@@ -184,7 +257,7 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
                 <div className="relative aspect-[4/3] rounded-sm overflow-hidden shadow-lg">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={IMAGES.ABOUT_SOCIAL_IMPACT}
+                    src={overview.socialImpact.imageUrl || IMAGES.ABOUT_SOCIAL_IMPACT}
                     alt="Social impact and worker welfare programs"
                     loading="lazy"
                     decoding="async"
@@ -196,15 +269,21 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
               {/* Content Left */}
               <div className="w-full lg:w-[55%]">
                 <h2 className="font-serif text-2xl sm:text-3xl text-brand font-bold leading-tight mb-5">
-                  Social Impact &amp; Worker Welfare
+                  {overview.socialImpact.heading}
                 </h2>
                 <div className="space-y-4 text-stone-600 leading-relaxed text-justify text-[15px]">
-                  <p>
-                    Beyond environmental mitigation, the operations generate measurable socio-economic impact by providing livelihood opportunities and employment. The enterprise creates direct and indirect employment across its value chain, including roles in logistics, administration, collection, and mechanical processing. The company actively improves working conditions for the informal waste sector—specifically community collectors, waste pickers, and truck drivers—by integrating them into a formal and structured supply chain. Furthermore, Bismillah Plastic implements documented commitments to gender equality and social inclusion, which are operationalized through gender-neutral hiring practices and equal opportunity frameworks targeting underrepresented groups.
-                  </p>
-                  <p>
-                    Occupational health and safety (OHS) serves as a central pillar of the organizational framework. Bismillah Plastic enforces strict worker welfare protocols and standard operating procedures to protect its workforce.
-                  </p>
+                  {overview.socialImpact.paragraph ? (
+                    <RichTextRenderer content={overview.socialImpact.paragraph} />
+                  ) : (
+                    <>
+                      {overview.socialImpact.paragraph1 && (
+                        <p>{overview.socialImpact.paragraph1}</p>
+                      )}
+                      {overview.socialImpact.paragraph2 && (
+                        <p>{overview.socialImpact.paragraph2}</p>
+                      )}
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -218,107 +297,48 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
           <FadeIn>
             <div className="text-center mb-10 sm:mb-14">
               <h2 className="font-serif text-2xl sm:text-3xl text-brand font-bold leading-tight mb-3">
-                Safety &amp; Welfare Focus
+                {overview.safetyFocus.heading}
               </h2>
-              <p className="text-stone-500 max-w-2xl mx-auto text-sm sm:text-base">
-                Comprehensive protocols ensuring the health, safety, and dignity of every worker across the value chain.
-              </p>
+              {overview.safetyFocus.description && (
+                <p className="text-stone-500 max-w-2xl mx-auto text-sm sm:text-base">
+                  {overview.safetyFocus.description}
+                </p>
+              )}
             </div>
           </FadeIn>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
-            {/* Occupational Training */}
-            <FadeIn delay={0}>
-              <div className="bg-white rounded-sm border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 h-full">
-                <div className="relative aspect-[16/9] overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={IMAGES.ABOUT_SAFETY_TRAINING}
-                    alt="Occupational training programs"
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                  />
+            {overview.safetyFocus.cards.map((card, idx) => (
+              <FadeIn key={idx} delay={idx * 0.1}>
+                <div className="bg-white rounded-sm border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 h-full flex flex-col">
+                  {card.imageUrl && (
+                    <div className="relative aspect-[16/9] overflow-hidden bg-stone-100">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={card.imageUrl}
+                        alt={card.title}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                      />
+                    </div>
+                  )}
+                  <div className="p-5 sm:p-6 flex-1 flex flex-col">
+                    <h3 className="font-serif text-lg sm:text-xl text-brand font-semibold mb-2">
+                      {card.title}
+                    </h3>
+                    <p className="text-sm text-stone-600 leading-relaxed text-justify flex-1">
+                      {card.description}
+                    </p>
+                  </div>
                 </div>
-                <div className="p-5 sm:p-6">
-                  <h3 className="font-serif text-lg sm:text-xl text-brand font-semibold mb-2">Occupational Training</h3>
-                  <p className="text-sm text-stone-600 leading-relaxed text-justify">
-                    Formal OHS training, hazard identification, and risk-control education are delivered to all employees through structured onboarding and recurring refresher programs. Workers receive hands-on instruction in safe equipment operation, chemical handling procedures, and emergency response protocols to maintain a consistently safe working environment.
-                  </p>
-                </div>
-              </div>
-            </FadeIn>
-
-            {/* On-Site Safety */}
-            <FadeIn delay={0.1}>
-              <div className="bg-white rounded-sm border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 h-full">
-                <div className="relative aspect-[16/9] overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={IMAGES.ABOUT_SAFETY_ONSITE}
-                    alt="On-site safety measures and PPE"
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                  />
-                </div>
-                <div className="p-5 sm:p-6">
-                  <h3 className="font-serif text-lg sm:text-xl text-brand font-semibold mb-2">On-Site Safety</h3>
-                  <p className="text-sm text-stone-600 leading-relaxed text-justify">
-                    Mandatory use of appropriate Personal Protective Equipment (PPE) alongside visible hazard pictograms and emergency contact displays is enforced across all operational areas. Regular safety audits and workplace inspections are conducted to identify and remediate potential hazards before they escalate, ensuring compliance with established safety standards.
-                  </p>
-                </div>
-              </div>
-            </FadeIn>
-
-            {/* Healthcare Access */}
-            <FadeIn delay={0.2}>
-              <div className="bg-white rounded-sm border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 h-full">
-                <div className="relative aspect-[16/9] overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={IMAGES.ABOUT_SAFETY_HEALTHCARE}
-                    alt="Healthcare access and first-aid facilities"
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                  />
-                </div>
-                <div className="p-5 sm:p-6">
-                  <h3 className="font-serif text-lg sm:text-xl text-brand font-semibold mb-2">Healthcare Access</h3>
-                  <p className="text-sm text-stone-600 leading-relaxed text-justify">
-                    First-aid facilities on-site, formalized arrangements with a local hospital for employee care, and regular employee health check-ups form the healthcare foundation. Preventive health screenings and wellness programs are implemented to proactively address occupational health risks and ensure that every worker has timely access to medical attention when needed.
-                  </p>
-                </div>
-              </div>
-            </FadeIn>
-
-            {/* Labor Compliance */}
-            <FadeIn delay={0.3}>
-              <div className="bg-white rounded-sm border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 h-full">
-                <div className="relative aspect-[16/9] overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={IMAGES.ABOUT_SAFETY_COMPLIANCE}
-                    alt="Labor compliance and ethical policies"
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                  />
-                </div>
-                <div className="p-5 sm:p-6">
-                  <h3 className="font-serif text-lg sm:text-xl text-brand font-semibold mb-2">Labor Compliance</h3>
-                  <p className="text-sm text-stone-600 leading-relaxed text-justify">
-                    Strict policies prohibiting child labor and forced labor, with mandates legally extended to all subcontractors and supply chain partners, are rigorously enforced. The enterprise maintains comprehensive documentation and conducts periodic compliance audits to verify that all labor practices align with national regulations and international ethical standards.
-                  </p>
-                </div>
-              </div>
-            </FadeIn>
+              </FadeIn>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Milestone Timeline */}
+      {/* ── MILESTONE TIMELINE ── */}
       <section className="section-padding bg-warm-white">
         <div className="container-wide">
           <SectionHeader
@@ -342,15 +362,17 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
                 <FadeIn
                   key={milestone._id || milestone.year}
                   delay={i * 0.1}
-                  className={`relative pl-12 md:pl-0 md:w-[calc(50%-24px)] ${i % 2 === 0 ? "md:mr-auto md:pr-8 md:text-right" : "md:ml-auto md:pl-8"
-                    }`}
+                  className={`relative pl-12 md:pl-0 md:w-[calc(50%-24px)] ${
+                    i % 2 === 0 ? "md:mr-auto md:pr-8 md:text-right" : "md:ml-auto md:pl-8"
+                  }`}
                 >
                   {/* Dot */}
                   <div
-                    className={`absolute top-1 w-3 h-3 rounded-full bg-brand border-2 border-ivory z-10 ${i % 2 === 0
-                      ? "left-[10px] md:left-auto md:-right-[30px]"
-                      : "left-[10px] md:-left-[30px]"
-                      }`}
+                    className={`absolute top-1 w-3 h-3 rounded-full bg-brand border-2 border-ivory z-10 ${
+                      i % 2 === 0
+                        ? "left-[10px] md:left-auto md:-right-[30px]"
+                        : "left-[10px] md:-left-[30px]"
+                    }`}
                   />
                   <span className="text-sm font-bold text-gold">{milestone.year}</span>
                   <h4 className="font-serif text-lg font-semibold text-brand mt-1">
@@ -369,21 +391,23 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
         </div>
       </section>
 
+      {/* ── COLLECTION NETWORK & PARTNERS ── */}
       <section className="section-padding bg-white border-y border-stone-light group">
         <div className="container-wide mb-10 text-center">
           <FadeIn>
             <span className="eyebrow text-brand">OUR NETWORK</span>
-            <h2 className="font-serif text-brand font-semibold mt-4 mb-4" style={{ fontSize: 'clamp(1.625rem, 2vw + 0.75rem, 2.25rem)' }}>
-              Our Collection Network & Partners
+            <h2
+              className="font-serif text-brand font-semibold mt-4 mb-4"
+              style={{ fontSize: "clamp(1.625rem, 2vw + 0.75rem, 2.25rem)" }}
+            >
+              Our Collection Network &amp; Partners
             </h2>
           </FadeIn>
         </div>
         <LogoMarquee clients={clients} />
       </section>
 
-      {/* Leadership moved to /about/management */}
-
-      {/* Certifications Strip */}
+      {/* ── CERTIFICATIONS STRIP ── */}
       <section className="section-padding bg-stone-light">
         <div className="container-wide">
           <SectionHeader
@@ -416,9 +440,13 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
                     )}
                   </div>
                   <div className="p-4 text-center w-full flex-grow flex flex-col justify-center bg-ivory">
-                    <p className="text-sm font-bold text-brand leading-tight mb-1 group-hover:text-gold transition-colors">{cert.title || cert.name}</p>
+                    <p className="text-sm font-bold text-brand leading-tight mb-1 group-hover:text-gold transition-colors">
+                      {cert.title || cert.name}
+                    </p>
                     {cert.description && (
-                      <p className="text-[11px] text-text-muted leading-tight line-clamp-2">{cert.description}</p>
+                      <p className="text-[11px] text-text-muted leading-tight line-clamp-2">
+                        {cert.description}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -439,15 +467,15 @@ export default function AboutPageContent({ journey = [], clients = [], certifica
           <FadeIn>
             <div className="text-center mb-6">
               <h2 className="font-serif text-2xl sm:text-3xl text-brand font-bold leading-tight">
-                Conclusion
+                {overview.conclusion.heading}
               </h2>
             </div>
             <div className="relative">
               <div className="absolute top-0 left-0 w-1 h-full bg-brand rounded-full hidden sm:block" />
               <div className="sm:pl-8">
-                <p className="text-stone-600 leading-relaxed text-justify text-[15px] sm:text-base">
-                  Bismillah Plastic functions as a vital industrial stakeholder within Bangladesh&apos;s regional waste recovery infrastructure. Operating continuously since 2016, the enterprise successfully merges community-level waste aggregation with industrial-scale mechanical processing to address systemic waste management deficits. By diverting tens of thousands of metric tons of diverse plastics from improper disposal and processing them into high-quality manufacturing feedstock, Bismillah Plastic delivers measurable environmental risk mitigation, economically supports the informal labor sector, and advances the regional transition toward a circular plastics economy.
-                </p>
+                <div className="text-stone-600 leading-relaxed text-justify text-[15px] sm:text-base">
+                  <RichTextRenderer content={overview.conclusion.paragraph} />
+                </div>
               </div>
             </div>
           </FadeIn>

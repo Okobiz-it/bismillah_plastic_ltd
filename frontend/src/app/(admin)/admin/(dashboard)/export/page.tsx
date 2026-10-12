@@ -1,9 +1,10 @@
-import ExportAdminContent from "@/components/admin/ExportAdminContent";
+import { redirect } from "next/navigation";
 
 export const metadata = {
-  title: "Admin - Impact & Export Settings",
+  title: "Admin - Impact",
 };
 
 export default function AdminExportPage() {
-  return <ExportAdminContent />;
+  redirect("/admin/impact");
 }
+

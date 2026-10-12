@@ -1,7 +1,8 @@
 import MissionVisionContent from "@/components/about/MissionVisionContent";
 import { API_BASE } from "@/lib/api";
+import { fetchPageBanner } from "@/lib/pageBanners";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 async function getGoals() {
   try {
@@ -14,7 +15,23 @@ async function getGoals() {
   }
 }
 
+async function getMissionVisionContent() {
+  try {
+    const res = await fetch(`${API_BASE}/settings/about_mission_vision`, { cache: "no-store" });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.data || null;
+  } catch {
+    return null;
+  }
+}
+
 export default async function Page() {
-  const goals = await getGoals();
-  return <MissionVisionContent goals={goals} />;
+  const [goals, banner, contentData] = await Promise.all([
+    getGoals(),
+    fetchPageBanner("about/mission-vision"),
+    getMissionVisionContent(),
+  ]);
+
+  return <MissionVisionContent goals={goals} banner={banner} contentData={contentData} />;
 }

@@ -15,9 +15,22 @@ export default function AdminTopbar({ onMenuClick }: AdminTopbarProps) {
   // Derive a readable title from the current path
   const segments = pathname.split("/").filter(Boolean);
   const lastSegment = segments[segments.length - 1] || "dashboard";
-  const formattedTitle = lastSegment
-    .charAt(0)
-    .toUpperCase() + lastSegment.slice(1).replace(/-/g, " ");
+
+  const titleMap: Record<string, string> = {
+    export: "Impact",
+    impact: "Impact",
+    "business-operations": "Business Operations",
+    "company-overview": "Company Overview",
+    "mission-vision": "Mission & Vision",
+    "photos-videos": "Photos | Videos",
+    gallery: "Photos | Videos",
+    "raw-materials": "Raw Materials",
+    inquiries: "Quote Requests",
+  };
+
+  const formattedTitle =
+    titleMap[lastSegment] ||
+    lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1).replace(/-/g, " ");
 
   return (
     <header className="h-14 bg-white border-b border-stone/20 flex items-center justify-between px-4 sm:px-6 sticky top-0 z-40 shadow-sm shrink-0">

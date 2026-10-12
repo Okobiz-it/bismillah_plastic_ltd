@@ -21,6 +21,7 @@ import settingsRoutes from './modules/settings/settings.routes.js';
 import networkRoutes from './modules/network/network.routes.js';
 import rawMaterialsRoutes from './modules/raw-materials/raw-materials.routes.js';
 import mediaRoutes from './modules/media/media.routes.js';
+import pageBannerRoutes from './modules/page-banners/page-banner.routes.js';
 
 const app = express();
 
@@ -78,6 +79,8 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api/network', networkRoutes);
 app.use('/api/raw-materials', rawMaterialsRoutes);
 app.use('/api/media', mediaRoutes);
+app.use('/api/page-banners', pageBannerRoutes);
+app.use('/api/banners/pages', pageBannerRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
