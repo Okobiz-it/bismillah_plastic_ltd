@@ -321,7 +321,7 @@ export default function AdminLoginContent() {
               </button>
 
               {/* Forgot Password Link Below Login Button */}
-              <div className="pt-2 sm:pt-3 text-center">
+              {/* <div className="pt-2 sm:pt-3 text-center">
                 <button
                   type="button"
                   onClick={handleRequestOtp}
@@ -330,7 +330,7 @@ export default function AdminLoginContent() {
                 >
                   Forgot Password?
                 </button>
-              </div>
+              </div> */}
             </form>
           )}
 
